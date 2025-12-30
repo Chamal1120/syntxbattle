@@ -10,14 +10,14 @@ export default defineConfig({
                 server.middlewares.use((_req, res, next) => {
                     res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
                     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-                    res.setHeader('Cache-Control', 'no-store'); // Kill the 304 cache for good
+                    res.setHeader('Cache-Control', 'no-store'); // Kill 304 cache
                     next();
                 });
             }
         }
     ],
     server: {
-        // Just to be absolutely sure Chrome treats it as a secure context
+        // Make browser treats the server as a secure context
         host: true,
         port: 5173,
     }
