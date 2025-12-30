@@ -18,7 +18,7 @@ export default defineConfig({
     ],
     server: {
         // Just to be absolutely sure Chrome treats it as a secure context
-        host: 'localhost',
-        port: 5173
+        host: true,
+        port: 5173,
     }
 });

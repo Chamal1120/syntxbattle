@@ -1,6 +1,6 @@
 <script lang="ts">
     /**
-     * Bitsip coding Battle platform - Root Layout
+     * Syntxbattle - coding Battle platform - Root Layout
      * * @description
      * This component lays the root layout and styles.
      * * @author: Chamal Mallawaarachchi
@@ -9,12 +9,12 @@
     import Navbar from "$lib/components/Navbar.svelte";
     import "./app.css";
 
-    let { children } = $props();
+    let { children, data } = $props();
 </script>
 
 <svelte:head>
     <link rel="icon" href={favicon} />
 </svelte:head>
 
-<Navbar />
+<Navbar user={data.user} />
 {@render children()}
