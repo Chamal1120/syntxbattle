@@ -131,13 +131,29 @@
                                 "Auto-Join FAILED:",
                                 joinError.message,
                                 joinError.details,
+                                "Code:",
+                                joinError.code
                             );
+                            
+                            // Duplicate key - already in match
                             if (joinError.code === "23505") {
                                 if (dev) console.log("Already in DB - adding to local state");
                                 participants = [
                                     ...participants,
                                     { user_id: data.user.id },
                                 ];
+                            } 
+                            // Match is full (from trigger)
+                            else if (joinError.code === 'P0001' || joinError.message?.includes('Match is full')) {
+                                alert("This match is full. Redirecting to battle selection...");
+                                goto('/battle');
+                                return;
+                            }
+                            // Other errors
+                            else {
+                                alert("Failed to join match. Please try again.");
+                                goto('/battle');
+                                return;
                             }
                         } else {
                             if (dev) console.log("Auto-join successful");
