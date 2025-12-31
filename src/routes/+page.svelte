@@ -1,14 +1,14 @@
 <script lang="ts">
     /**
-     * BitSip - Welcome Page
+     * Syntxbattle - Welcome Page
      * @description
      * Landing page for the coding battle platform
      */
 </script>
 
-<div class="welcome">
-    <h1>Welcome to BitSip</h1>
-    <p>Ready to battle?</p>
+<div class="centered-container">
+    <h1 class="space-mono-bold">Welcome to SyntXBattle</h1>
+    <p>Test your Syntax Arsenal against some fun problems.</p>
 
     <div class="actions">
         <a href="/battle">
@@ -18,23 +18,12 @@
 </div>
 
 <style>
-    .welcome {
-        text-align: center;
-        margin-top: 4rem;
-    }
-
     .actions {
-        margin-top: 2rem;
+        margin-top: var(--space-xl);
     }
-
     button {
-        background: var(--accent);
-        color: var(--bg-main);
-        border: none;
-        padding: 1rem 2rem;
-        border-radius: 8px;
-        font-weight: bold;
+        padding: var(--space-md) var(--space-xl);
+        border-radius: var(--radius-lg);
         font-size: 1.1rem;
-        cursor: pointer;
     }
 </style>

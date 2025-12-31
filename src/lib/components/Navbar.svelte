@@ -10,7 +10,7 @@
 </script>
 
 <nav>
-    <h1>SyntXBattle<span class="vtag">v0.1.0</span></h1>
+    <h1 class="vt323-regular nav-logo">SyntXBattle<span class="vtag space-mono-bold">v0.1.0</span></h1>
     <Logout authenticated={!!user} />
 </nav>
 
@@ -21,5 +21,15 @@
         align-items: center;
         padding: 1rem 0;
         margin-bottom: 1rem;
+    }
+
+    .nav-logo {
+        font-size: 2.5rem;
+    }
+
+    .vtag {
+        font-size: 0.6rem;
+        padding-left: 5px;
+        color: var(--keyword);
     }
 </style>

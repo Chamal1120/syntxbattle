@@ -33,7 +33,8 @@
 </script>
 
 <div class="login-gate">
-    <h1>BitSip</h1>
+    <h1>SyntXbattle</h1>
+    <p>Login to start battling</p>
     
     <div class="auth-section">
         <input type="email" bind:value={email} placeholder="Email..." />
@@ -69,30 +70,60 @@
         align-items: center;
         justify-content: center;
         height: 100vh;
-        gap: 1.5rem;
+        gap: var(--space-lg);
     }
+
+    .auth-section {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+        min-width: 300px;
+    }
+
+    input {
+        background: var(--bg-inactive);
+        color: var(--fg-main);
+        border: 1px solid var(--border-default);
+        padding: 0.75rem;
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+    }
+
     .github-btn {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        justify-content: center;
+        gap: var(--space-sm);
         background: #24292e;
         color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 6px;
+        padding: 0.75rem var(--space-lg);
+        border-radius: var(--radius-md);
         cursor: pointer;
+        border: none;
+        min-width: 300px;
     }
+
     .google-btn {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        justify-content: center;
+        gap: var(--space-sm);
         background: white;
         color: #3c4043;
-        padding: 0.75rem 1.5rem;
-        border-radius: 6px;
+        padding: 0.75rem var(--space-lg);
+        border-radius: var(--radius-md);
         border: 1px solid #dadce0;
         cursor: pointer;
+        min-width: 300px;
     }
+
     .google-btn:hover {
         background: #f8f9fa;
+    }
+
+    .status {
+        margin-top: var(--space-md);
+        color: var(--comment);
+        font-size: 0.9rem;
     }
 </style>

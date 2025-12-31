@@ -14,16 +14,15 @@
 
 <style>
     .logout-btn {
-        /* Modern Chrome 2025: Using relative colors for hover effects */
-        background: #ff4444;
-        color: white;
+        background: var(--error);
+        color: var(--fg-main);
         padding: 0.5rem 1rem;
         border-radius: 8px;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: filter 0.2s;
     }
 
     .logout-btn:hover {
-        background: color-mix(in srgb, #ff4444, black 20%);
+        filter: brightness(0.8);
     }
 </style>

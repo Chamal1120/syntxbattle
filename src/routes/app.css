@@ -3,22 +3,30 @@
 * @author Chamal Mallawaarachchi
 */
 
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 :root {
     /* Main Surfaces */
     --bg-main: #141415;
-    --bg-inactive: #1c1c24;
+    --bg-inactive: #252530;
+    --bg-card: #252530;
+    --bg-hover: #252530;
     --fg-main: #cdcdcd;
     
     /* Borders & Lines */
     --border-dim: #252530;
-    --border-float: #878787;
+    --border-default: #606079;
+    --border-hover: #606079;
+    --border-float: #cdcdcd;
     
     /* Syntax & Accents */
-    --accent: #b4d4cf;
+    --accent: #aeaed1;
+    --accent-bright: #7fa563;
     --keyword: #6e94b2;
-    --function: #c48282;
-    --string: #e8b589;
-    --number: #e0a363;
+    --function: #d8647e;
+    --string: #f3be7c;
+    --number: #f3be7c;
     --comment: #606079;
     
     /* Status */
@@ -27,7 +35,31 @@
     --success: #7fa563;
     
     /* UI States */
-    --selection: #333738;
+    --selection: #606079;
+    
+    /* Opacity variants */
+    --accent-alpha-10: rgba(174, 174, 209, 0.1);
+    --accent-bright-alpha-10: rgba(127, 165, 99, 0.1);
+    --accent-bright-alpha-20: rgba(127, 165, 99, 0.2);
+    --accent-bright-alpha-30: rgba(127, 165, 99, 0.3);
+    
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+    
+    /* Border radius */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    --radius-2xl: 20px;
+    --radius-full: 50px;
+    --radius-circle: 50%;
 }
 
 /* global styles reset */
@@ -35,6 +67,36 @@
     /* box-sizing: border-box; */
     margin: 0;
     padding: 0;
+}
+
+.vt323-regular {
+  font-family: "VT323", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.space-mono-regular {
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.space-mono-bold {
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.space-mono-regular-italic {
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.space-mono-bold-italic {
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-style: italic;
 }
 
 html, body {
@@ -49,6 +111,10 @@ html, body {
 
 body {
     padding: 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--fg-main);
 }
 
 .ide {
@@ -112,7 +178,7 @@ button {
     color: var(--bg-main);
     border: none;
     padding: 4px 12px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-weight: bold;
     cursor: pointer;
     transition: filter 0.2s ease;
@@ -128,8 +194,26 @@ button {
     }
 }
 
-.vtag {
-    font-size: 1rem;
-    padding-left: 5px;
-    color: var(--keyword);
+.centered-container {
+    text-align: center;
+    margin-top: var(--space-3xl);
+}
+
+.player-slot {
+    width: 80px;
+    aspect-ratio: 1;
+    background: var(--bg-card);
+    border-radius: var(--radius-circle);
+    display: grid;
+    place-items: center;
+    border: 2px solid var(--border-default);
+}
+
+.player-slot.active {
+    border-color: var(--accent-bright);
+}
+
+.player-slot.empty {
+    border-style: dashed;
+    color: var(--border-hover);
 }
