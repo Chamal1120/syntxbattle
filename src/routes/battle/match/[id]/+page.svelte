@@ -57,7 +57,7 @@
 
     //--------------------- Event handlers ------------------------------------
 
-    function handlePostgresChange( payload: any) {
+    function handlePostgresChange(payload: any) {
         if (dev) console.log("Realtime Event Received:", payload);
 
         if (payload.eventType === "INSERT") {
@@ -279,9 +279,8 @@
         ({ matchInfo, participants } = result);
 
         // Starting realtime subscription
-        subscribeToMatch(matchId, matchInfo)
+        subscribeToMatch(matchId, matchInfo);
     });
-
 
     beforeNavigate(() => {
         if (dev) console.log("beforeNavigate triggered");
@@ -354,7 +353,6 @@
         display: inline-block;
         background: var(--bg-card);
         padding: 5px 15px;
-        border-radius: 20px;
         font-size: 0.8rem;
         cursor: pointer;
         border: 1px solid var(--border-hover);
@@ -373,7 +371,6 @@
         width: 80px;
         aspect-ratio: 1;
         background: var(--bg-card);
-        border-radius: 50%;
         display: grid;
         place-items: center;
         border: 2px solid var(--border-default);
@@ -390,7 +387,6 @@
         color: var(--bg-main);
         font-weight: bold;
         padding: 1.2rem 3rem;
-        border-radius: 50px;
         font-size: 1.1rem;
         cursor: pointer;
         border: none;

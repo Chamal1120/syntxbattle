@@ -33,8 +33,8 @@
 </script>
 
 <div class="login-gate">
-    <h1>SyntXbattle</h1>
-    <p>Login to start battling</p>
+    <h1 class="login-title space-mono-bold">Login</h1>
+    <p>to start battling</p>
     
     <div class="auth-section">
         <input type="email" bind:value={email} placeholder="Email..." />
@@ -69,9 +69,14 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        height: 100vdh;
         gap: var(--space-lg);
     }
+
+    .login-title {
+      font-size: clamp(6rem, 10vw, 20rem);  
+    }
+
 
     .auth-section {
         display: flex;
@@ -85,7 +90,6 @@
         color: var(--fg-main);
         border: 1px solid var(--border-default);
         padding: 0.75rem;
-        border-radius: var(--radius-md);
         font-size: 1rem;
     }
 
@@ -97,7 +101,6 @@
         background: #24292e;
         color: white;
         padding: 0.75rem var(--space-lg);
-        border-radius: var(--radius-md);
         cursor: pointer;
         border: none;
         min-width: 300px;
@@ -111,7 +114,6 @@
         background: white;
         color: #3c4043;
         padding: 0.75rem var(--space-lg);
-        border-radius: var(--radius-md);
         border: 1px solid #dadce0;
         cursor: pointer;
         min-width: 300px;

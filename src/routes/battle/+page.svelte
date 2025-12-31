@@ -2,9 +2,8 @@
     import { onMount } from "svelte";
     import { supabase } from "$lib/supabaseClient";
     import { matchManager } from "$lib/matchManager.svelte";
-    import { getBotAvatar } from "$lib/userUtils";
 
-    let { data } = $props();
+    //let { data } = $props();
     let problems = $state<any[]>([]);
     let loading = $state(true);
 
@@ -17,139 +16,53 @@
         problems = probData || [];
         loading = false;
     });
-
-    async function handleLogout() {
-        await supabase.auth.signOut();
-        window.location.href = "/login";
-    }
 </script>
 
-<div class="arena-container">
-    <header class="user-bar">
-        <div class="user-info">
-            <img
-                src={getBotAvatar(data.user.id)}
-                alt="Avatar"
-                class="user-avatar"
-                crossorigin="anonymous"
-            />
-            <div class="user-details">
-                <span class="label">Logged in as:</span>
-                <span class="email">{data.user.email}</span>
+<div class="page-scroll-wrapper">
+    <div class="arena-container">
+        <h1>Select Your Challenge</h1>
+
+        {#if loading}
+            <div class="loading-state">
+                <p>Loading problems...</p>
             </div>
-        </div>
-        <button onclick={handleLogout} class="logout-btn">Sign Out</button>
-    </header>
-
-    <hr class="divider" />
-
-    <h1>Select Your Challenge</h1>
-
-    {#if loading}
-        <div class="loading-state">
-            <p>Loading problems...</p>
-        </div>
-    {:else}
-        <div class="problem-grid">
-            {#each problems as problem}
-                <div class="problem-card">
-                    <div class="card-header">
-                        <h3>{problem.title}</h3>
-                        <span
-                            class="difficulty {problem.difficulty.toLowerCase()}"
+        {:else}
+            <div class="problem-grid">
+                {#each problems as problem}
+                    <div class="problem-card">
+                        <div class="card-header">
+                            <h3>{problem.title}</h3>
+                            <span
+                                class="difficulty {problem.difficulty.toLowerCase()}"
+                            >
+                                {problem.difficulty}
+                            </span>
+                        </div>
+                        <p>{problem.description}</p>
+                        <button
+                            onclick={() =>
+                                matchManager.createMatch({ problemId: problem.id })}
+                            class="battle-btn"
                         >
-                            {problem.difficulty}
-                        </span>
+                            Create 1v1
+                        </button>
                     </div>
-                    <p>{problem.description}</p>
-                    <button
-                        onclick={() =>
-                            matchManager.createMatch({ problemId: problem.id })}
-                        class="battle-btn"
-                    >
-                        Create 1v1
-                    </button>
-                </div>
-            {/each}
-        </div>
-    {/if}
+                {/each}
+            </div>
+        {/if}
+    </div>
 </div>
 
 <style>
+    .page-scroll-wrapper {
+        height: 100vh;
+        overflow-y: auto;
+    }
+
     .loading-state {
         text-align: center;
         margin-top: var(--space-2xl);
         color: var(--comment);
-    }
-    .card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-default);
-        border-radius: var(--radius-xl);
-        padding: var(--space-lg);
-    }
-
-    .user-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: var(--bg-hover);
-        padding: 0.75rem 1.25rem;
-        border-radius: var(--radius-xl);
-        border: 1px solid var(--border-default);
-        margin-bottom: var(--space-xl);
-    }
-
-    .user-info {
-        display: flex;
-        align-items: center;
-        gap: var(--space-md);
-    }
-
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: var(--radius-lg);
-        background: var(--bg-main);
-        border: 1px solid var(--border-hover);
-    }
-
-    .user-details {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .label {
-        font-size: 0.7rem;
-        color: var(--comment);
-        text-transform: uppercase;
-        letter-spacing: 0.05rem;
-    }
-
-    .email {
-        font-size: 0.9rem;
-        color: var(--accent-bright);
-        font-weight: 500;
-    }
-
-    .logout-btn {
-        background: transparent;
-        border: 1px solid var(--border-hover);
-        color: var(--comment);
-        padding: 0.4rem 0.8rem;
-        border-radius: var(--radius-md);
-        cursor: pointer;
-        font-size: 0.8rem;
-    }
-
-    .logout-btn:hover {
-        border-color: var(--error);
-        color: var(--error);
-    }
-
-    .divider {
-        border: 0;
-        border-top: 1px solid var(--border-dim);
-        margin-bottom: var(--space-xl);
     }
 
     .problem-grid {
@@ -162,7 +75,6 @@
         background: var(--bg-card);
         border: 1px solid var(--border-default);
         padding: var(--space-lg);
-        border-radius: var(--radius-xl);
     }
 
     .card-header {
@@ -175,7 +87,6 @@
     .difficulty {
         font-size: 0.7rem;
         padding: 2px 8px;
-        border-radius: var(--radius-sm);
         font-weight: bold;
     }
 
@@ -191,7 +102,6 @@
         color: black;
         font-weight: bold;
         padding: 0.6rem;
-        border-radius: var(--radius-md);
         cursor: pointer;
         border: none;
     }

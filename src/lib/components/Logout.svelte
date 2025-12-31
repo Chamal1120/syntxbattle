@@ -17,7 +17,6 @@
         background: var(--error);
         color: var(--fg-main);
         padding: 0.5rem 1rem;
-        border-radius: 8px;
         cursor: pointer;
         transition: filter 0.2s;
     }

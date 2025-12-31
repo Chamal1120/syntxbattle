@@ -1,9 +1,8 @@
 /**
-* Syntxbattle - coding Battle platform - Styles
+* Syntxbattle - Styles
 * @author Chamal Mallawaarachchi
 */
 
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
@@ -69,10 +68,15 @@
     padding: 0;
 }
 
-.vt323-regular {
-  font-family: "VT323", monospace;
-  font-weight: 400;
-  font-style: normal;
+/* global typography */
+p, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+}
+
+/* global border radius reset */
+button, div {
+    border-radius: 0;
+    font-weight: 700;
 }
 
 .space-mono-regular {
@@ -106,7 +110,9 @@ html, body {
     -webkit-font-smoothing: antialiased;
     color-scheme: dark;
     font-family: system-ui, -apple-system, sans-serif;
-    overflow-x: hidden;
+    overflow: hidden;
+    margin: 0;
+    cursor: var(--cursor-default);
 }
 
 body {
@@ -117,103 +123,23 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--fg-main);
 }
 
-.ide {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    height: 100%;
-    background: var(--bg-main);
-    gap: 2px;
-}
-
-.pane {
-    display: grid;
-    grid-template-rows: auto 1fr;
-    background: var(--bg-main);
-}
-
-.toolbar {
-    background: var(--bg-inactive);
-    padding: 8px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border-dim);
-    font-family: system-ui, sans-serif;
-    font-size: 0.8rem;
-    color: var(--comment);
-}
-
-textarea {
-    background: transparent;
-    color: var(--fg-main);
-    font-family: "Fira Code", monospace;
-    font-size: 1rem;
-    padding: 20px;
-    border: none;
-    resize: none;
-    outline: none;
-    caret-color: var(--accent);
-}
-
-/* Style the selection color to match your palette */
-textarea::selection {
-    background: var(--selection);
-}
-
-.console-body {
-    padding: 20px;
-    overflow-y: auto;
-    scrollbar-gutter: stable;
-    background: var(--bg-main);
-}
-
-code {
-    color: var(--accent); 
-    font-family: "Fira Code", monospace;
-    white-space: pre-wrap;
-}
-
 button {
-    background: var(--accent);
-    color: var(--bg-main);
+    appearance: none;
     border: none;
-    padding: 4px 12px;
-    border-radius: var(--radius-sm);
-    font-weight: bold;
-    cursor: pointer;
-    transition: filter 0.2s ease;
-
-    &:hover {
-        filter: brightness(1.1);
-    }
-
-    &:disabled {
-        background: var(--bg-inactive);
-        color: var(--comment);
-        cursor: not-allowed;
-    }
+    padding: 0;
+    margin: 0;
+    outline: none;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
+    color: var(--fg-main);
+    background: var(bg-main);
+    cursor: var(--cursor-pointer);
 }
 
-.centered-container {
-    text-align: center;
-    margin-top: var(--space-3xl);
+/* Apply pointer cursor to all interactive elements */
+a, button, input[type="submit"], input[type="button"], 
+select, [role="button"], [onclick] {
+    cursor: var(--cursor-pointer);
 }
 
-.player-slot {
-    width: 80px;
-    aspect-ratio: 1;
-    background: var(--bg-card);
-    border-radius: var(--radius-circle);
-    display: grid;
-    place-items: center;
-    border: 2px solid var(--border-default);
-}
-
-.player-slot.active {
-    border-color: var(--accent-bright);
-}
-
-.player-slot.empty {
-    border-style: dashed;
-    color: var(--border-hover);
-}

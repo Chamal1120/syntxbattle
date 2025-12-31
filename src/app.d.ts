@@ -1,6 +1,7 @@
 /**
- * Syntxbattle coding Battle platform - Ambient Type declarations
+ * Syntxbattle - Ambient Type declarations
  * See https://svelte.dev/docs/kit/types#app.d.ts
+ *
  * * @author: Chamal Mallawaarachchi
  */
 import { SupabaseClient, Session, User } from '@supabase/supabase-js';

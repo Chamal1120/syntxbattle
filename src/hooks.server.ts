@@ -1,5 +1,6 @@
 /**
- * Server-side hooks for the Syntxbattle platform.
+ * Syntxbattle - server-side hooks
+ *
  * * @description
  * This handle hook modifies outgoing HTTP responses to enable the security
  * headers required for WebContainers to function. 
@@ -8,15 +9,14 @@
  * 2. Cross-Origin-Opener-Policy (COOP): 'same-origin'
  * * These headers enable 'SharedArrayBuffer', allowing the browser to create 
  * the isolated environment needed to run a virtual Node.js process.
+ *
  * * @author Chamal Mallawaarachchi
  */
 import { createServerClient } from '@supabase/ssr';
 import { type Handle } from '@sveltejs/kit';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 
-console.log('>>> SERVER HOOK INITIALIZED');
 export const handle: Handle = async ({ event, resolve }) => {
-    console.log('>>> ATTEMPTING REQUEST:', event.url.pathname);
     // Setup Supabase Client (Server-Side)
     event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
         cookies: {
