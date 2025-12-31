@@ -9,6 +9,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     }
     
     return {
-        matchId: params.matchId
+        matchId: params.matchId,
+        user
     };
 };
