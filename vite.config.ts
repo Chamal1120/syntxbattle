@@ -1,4 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import Icons from 'unplugin-icons/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -14,7 +15,10 @@ export default defineConfig({
                     next();
                 });
             }
-        }
+        },
+        Icons({
+            compiler: 'svelte',
+        })
     ],
     server: {
         // Make browser treats the server as a secure context

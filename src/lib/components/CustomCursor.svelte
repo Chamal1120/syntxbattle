@@ -1,4 +1,11 @@
 <script lang="ts">
+    /**
+    * Syntxbattle - custom cursor
+    *
+    * Logic and cursor svg are based on below codepen
+    * -> https://codepen.io/fuzionix/pen/PoRWVRg
+    * 
+    */
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 

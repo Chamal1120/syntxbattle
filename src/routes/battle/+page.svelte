@@ -18,47 +18,40 @@
     });
 </script>
 
-<div class="page-scroll-wrapper">
-    <div class="arena-container">
-        <h1>Select Your Challenge</h1>
+<div class="arena-container">
+    <h1>Select Your Challenge</h1>
 
-        {#if loading}
-            <div class="loading-state">
-                <p>Loading problems...</p>
-            </div>
-        {:else}
-            <div class="problem-grid">
-                {#each problems as problem}
-                    <div class="problem-card">
-                        <div class="card-header">
-                            <h3>{problem.title}</h3>
-                            <span
-                                class="difficulty {problem.difficulty.toLowerCase()}"
-                            >
-                                {problem.difficulty}
-                            </span>
-                        </div>
-                        <p>{problem.description}</p>
-                        <button
-                            onclick={() =>
-                                matchManager.createMatch({ problemId: problem.id })}
-                            class="battle-btn"
+    {#if loading}
+        <div class="loading-state">
+            <p>Loading problems...</p>
+        </div>
+    {:else}
+        <div class="problem-grid">
+            {#each problems as problem}
+                <div class="problem-card">
+                    <div class="card-header">
+                        <h3>{problem.title}</h3>
+                        <span
+                            class="difficulty {problem.difficulty.toLowerCase()}"
                         >
-                            Create 1v1
-                        </button>
+                            {problem.difficulty}
+                        </span>
                     </div>
-                {/each}
-            </div>
-        {/if}
-    </div>
+                    <p>{problem.description}</p>
+                    <button
+                        onclick={() =>
+                            matchManager.createMatch({ problemId: problem.id })}
+                        class="battle-btn"
+                    >
+                        Create 1v1
+                    </button>
+                </div>
+            {/each}
+        </div>
+    {/if}
 </div>
 
 <style>
-    .page-scroll-wrapper {
-        height: 100vh;
-        overflow-y: auto;
-    }
-
     .loading-state {
         text-align: center;
         margin-top: var(--space-2xl);

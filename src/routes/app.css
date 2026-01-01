@@ -59,7 +59,36 @@
     --radius-2xl: 20px;
     --radius-full: 50px;
     --radius-circle: 50%;
+
+    --view-transition-duration: 0.4s;
+
+    /* Smooth fade-in/out for the whole page */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: var(--view-transition-duration);
+    }
 }
+
+ @media (prefers-reduced-motion: reduce) {
+     *,
+     *::before,
+     *::after {
+         animation-duration: 0.01ms !important;
+         animation-iteration-count: 1 !important;
+         transition-duration: 0.01ms !important;
+     }
+
+     /* Allow interactive transitions (hover, focus, click) - they're
+user-triggered */
+     *:hover,
+     *:focus,
+     *:active,
+     button:hover,
+     a:hover {
+         transition-duration: 0.2s !important;
+     }
+ }
+
 
 /* global styles reset */
 *, *::before, *::after {
@@ -104,19 +133,20 @@ button, div {
 }
 
 html, body {
+    max-inline: 1280px;
+    margin-inline: auto;
     background-color: var(--bg-main);
     color: var(--fg-main);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     color-scheme: dark;
     font-family: system-ui, -apple-system, sans-serif;
-    overflow: hidden;
     margin: 0;
     cursor: var(--cursor-default);
 }
 
 body {
-    padding: 20px;
+    padding: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -135,6 +165,68 @@ button {
     color: var(--fg-main);
     background: var(bg-main);
     cursor: var(--cursor-pointer);
+}
+
+/* Reset all input styles */
+input,
+textarea,
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    outline: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    border-radius: 0;
+}
+
+/* Remove all input pseudo-elements and browser decorations */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button,
+input::-webkit-search-decoration,
+input::-webkit-search-cancel-button,
+input::-webkit-search-results-button,
+input::-webkit-search-results-decoration,
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-contacts-auto-fill-button,
+input::-ms-reveal,
+input::-ms-clear {
+    display: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+}
+
+/* Remove all states and animations */
+input:hover,
+input:focus,
+input:active,
+input:focus-visible,
+textarea:hover,
+textarea:focus,
+textarea:active,
+textarea:focus-visible,
+select:hover,
+select:focus,
+select:active,
+select:focus-visible {
+    outline: none;
+    border: none;
+    box-shadow: none;
+    background: none;
+}
+
+/* Remove autocomplete styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Apply pointer cursor to all interactive elements */

@@ -47,11 +47,15 @@
 
 <style>
     nav {
+        position: sticky;
+        top: 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 1rem 0;
         margin-bottom: 1rem;
+        background-color: var(--bg-main);
+        z-index: 100;
     }
 
     .nav-logo-main {
