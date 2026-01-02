@@ -303,7 +303,6 @@
         transform: rotate(-3deg);
         padding: 2rem 1rem;
         margin: 0;
-        width: 100%;
         word-break: keep-all;
         overflow-wrap: normal;
         white-space: nowrap;
@@ -317,7 +316,7 @@
 
     @media (max-width: 640px) {
         .extra-styles {
-            font-size: clamp(2.2rem, 13vw, 12rem);
+            font-size: clamp(2rem, 11vw, 12rem);
             padding: 0.5rem;
         }
         
