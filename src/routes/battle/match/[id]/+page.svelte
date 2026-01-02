@@ -294,7 +294,7 @@
 <div class="waiting-area">
     {#if matchInfo}
         <div class="header">
-            <h1>{matchInfo.problems.title}</h1>
+            <h1 class="lobby-title">{matchInfo.problems.title}</h1>
             <button
                 class="invite-tag"
                 onclick={() => navigator.clipboard.writeText(inviteLink)}
@@ -307,7 +307,7 @@
             {#if joining}
                 Joining battle...
             {:else if participants.length === matchInfo.max_players}
-                Room Full! Ready to start.
+                Ready to start.
             {:else}
                 Waiting for opponent ({participants.length}/{matchInfo.max_players})
             {/if}
@@ -347,13 +347,22 @@
         text-align: center;
         margin-top: 4rem;
     }
+
+    .lobby-title {
+        font-size: clamp(1rem, 5vw, 5rem);
+        color: var(--success);
+    }
+
     .invite-tag {
         display: inline-block;
         background: var(--bg-card);
         padding: 5px 15px;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
         font-size: 0.8rem;
         cursor: pointer;
         border: 1px solid var(--border-hover);
+        border-radius: 5rem;
     }
     .invite-tag:hover {
         border-color: var(--accent-bright);
@@ -372,6 +381,7 @@
         display: grid;
         place-items: center;
         border: 2px solid var(--border-default);
+        border-radius: 50%;
     }
     .active {
         border-color: var(--accent-bright);
@@ -383,11 +393,26 @@
     .start-btn {
         background: var(--accent-bright);
         color: var(--bg-main);
-        font-weight: bold;
+        font-weight: 800;
         padding: 1.2rem 3rem;
         font-size: 1.1rem;
         cursor: pointer;
         border: none;
         box-shadow: 0 0 20px var(--accent-bright-alpha-30);
+        animation: breathe 2s ease-in-out infinite;
+        transition: transform(1s);
+
+        &:active {
+            transform: scale(0.95);
+        }
+    }
+
+    @keyframes breathe {
+        0%, 100% {
+            box-shadow: 0 0 36px 6px var(--accent-bright-alpha-20);
+        }
+        50% {
+            box-shadow: 0 0 36px 6px var(--accent-bright-alpha-60);
+        }
     }
 </style>

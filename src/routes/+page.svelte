@@ -189,7 +189,7 @@
         class="space-mono-bold extra-styles"
         style="transform: translateY({titleY.current}px) rotate({titleRotate.current}deg); opacity: {titleOpacity.current}; will-change: transform, opacity"
     >
-        <span class="title-inner">SyntXBattle</span>
+        <span class="title-inner">{`{SyntXBattle}`}</span>
     </h1>
     <p
         class="tagline"

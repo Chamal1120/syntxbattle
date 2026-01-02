@@ -16,14 +16,22 @@
         window.location.href = "/login";
     }
 
+    function handleLogoClick() {
+        goto('/');
+    }
+
     function toggleMenu() {
         showMenu = !showMenu;
     }
 </script>
 
 <nav>
-    <button class="nav-logo-button" onclick={goto('/')}>
-        <h1 class="space-mono-bold nav-logo-main">SyntXBattle</h1>
+    <button class="nav-logo-btn hide-on-desktop" onclick={handleLogoClick}>
+        <h1 class="space-mono-bold nav-logo-main">{`{SXB}`}</h1>
+        <p class="vtag space-mono-bold">v0.1.0</p>
+    </button>
+    <button class="nav-logo-btn hide-on-mobile" onclick={handleLogoClick}>
+        <h1 class="space-mono-bold nav-logo-main">{`{SyntXBattle}`}</h1>
         <p class="vtag space-mono-bold">v0.1.0</p>
     </button>
     {#if user}
@@ -59,10 +67,9 @@
         z-index: 100;
     }
 
-    .nav-logo-button {
+    .nav-logo-btn {
         background-color: transparent;
         cursor: poiner;
-        -webkit-tap-highlight-color: transparent;
     }
 
     .nav-logo-main {
@@ -70,20 +77,12 @@
         padding: 0;
         anchor-name: --logo-text;
         background-color: transparent;
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         color: var(--string);
         transform: rotate(-3deg);
-        transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.1s; 
         will-change: transform;
 
-    }
-
-    .nav-logo-button:active .nav-logo-main {
-        transform: rotate(2deg);
-    }
-
-    .nav-logo-button:active .vtag {
-        transform: rotate(-5deg);
     }
 
     .vtag {
@@ -97,7 +96,16 @@
         margin-left: -20px;
         margin-top: -14px;
         color: var(--bg-main);
+        transition: transform 0.1s; 
         z-index: 2;
+    }
+
+    .nav-logo-btn:active .nav-logo-main {
+        transform: rotate(2deg);
+    }
+
+    .nav-logo-btn:active .vtag {
+        transform: rotate(-5deg);
     }
 
     .user-menu {
@@ -117,7 +125,11 @@
         border-radius: 50%;
         padding: 10%;
         border: 2px solid var(--border-hover);
-        transition: border-color 0.2s;
+        transition: all 0.1s;
+
+        &:active {
+            transform: scale(0.9);
+        }
     }
 
     .avatar-btn:hover .user-avatar {

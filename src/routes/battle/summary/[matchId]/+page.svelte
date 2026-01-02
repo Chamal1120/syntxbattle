@@ -90,7 +90,7 @@
 
 <div class="summary-container">
     <div class="summary-card">
-        <h1>Match Complete!</h1>
+        <h1>Match Summary</h1>
 
         {#if loading}
             <p>Loading results...</p>
@@ -100,7 +100,9 @@
             <div class="podium">
                 {#if participants[0]}
                     <div class="winner">
-                        <div class="trophy">🏆</div>
+                        <div class="trophy">
+                            <img src="/sxb-trophy.svg" alt="Trophy" />
+                        </div>
                         <h3>Winner</h3>
                         <p class="username">{participants[0].username}</p>
                         <p class="time">
@@ -115,10 +117,10 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Rank</th>
-                            <th>Participant</th>
-                            <th>Time</th>
-                            <th>Status</th>
+                            <th class="col-rank">Rank</th>
+                            <th class="col-participant">Participant</th>
+                            <th class="col-time">Time</th>
+                            <th class="col-status">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,17 +131,17 @@
                                     : ""}
                             >
                                 <td class="rank">#{index + 1}</td>
-                                <td>{participant.username}</td>
-                                <td
+                                <td class="participant">{participant.username}</td>
+                                <td class="time"
                                     >{formatTime(
                                         participant.completion_time_ms,
                                     )}</td
                                 >
-                                <td>
+                                <td class="status-cell">
                                     <span class="status {participant.status}">
                                         {participant.status === "finished"
                                             ? "Completed"
-                                            : "Competing"}
+                                            : "Did not complete"}
                                     </span>
                                 </td>
                             </tr>
@@ -161,15 +163,13 @@
         justify-content: center;
         align-items: center;
         min-height: 100vh;
-        padding: 2rem;
+        padding: 1rem;
         background: var(--bg-main);
     }
 
     .summary-card {
         max-width: 800px;
         width: 100%;
-        background: var(--bg-inactive);
-        padding: 3rem;
         text-align: center;
     }
 
@@ -188,16 +188,18 @@
         margin: 2rem 0;
     }
 
-    .winner {
-        display: inline-block;
-        padding: 2rem;
-        background: rgba(180, 212, 207, 0.1);
-        border: 2px solid var(--accent);
-    }
-
     .trophy {
         font-size: 4rem;
         margin-bottom: 0.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .trophy img {
+        width: 6rem;
+        height: 6rem;
+        object-fit: contain;
     }
 
     .winner h3 {
@@ -241,14 +243,50 @@
         text-transform: uppercase;
     }
 
+    th.col-rank {
+        text-align: left;
+        width: 15%;
+    }
+
+    th.col-participant {
+        text-align: left;
+        width: 35%;
+    }
+
+    th.col-time {
+        text-align: center;
+        width: 20%;
+    }
+
+    th.col-status {
+        text-align: center;
+        width: 30%;
+    }
+
     td {
         padding: 1rem 0.75rem;
         border-bottom: 1px solid var(--border-dim);
+        text-align: left;
     }
 
-    .rank {
+    td.rank {
         font-weight: bold;
         color: var(--accent);
+        text-align: left;
+    }
+
+    td.participant {
+        text-align: left;
+    }
+
+    td.time {
+        text-align: center;
+        font-family: monospace;
+        font-size: 1.1rem;
+    }
+
+    td.status-cell {
+        text-align: center;
     }
 
     tr.current-user {
@@ -282,7 +320,64 @@
         transition: transform 0.2s;
     }
 
-    .new-match-btn:hover {
-        transform: scale(1.05);
+    .new-match-btn:active {
+        transform: scale(0.95);
+    }
+
+    @media (max-width: 640px) {
+        .summary-card {
+            padding: 1.5rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        table {
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.5rem;
+        }
+
+        th.col-rank,
+        td.rank {
+            width: 20%;
+        }
+
+        th.col-participant,
+        td.participant {
+            width: 40%;
+        }
+
+        th.col-time,
+        td.time {
+            width: 20%;
+            font-size: 0.95rem;
+        }
+
+        th.col-status,
+        td.status-cell {
+            width: 20%;
+        }
+
+        .status {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+        }
+
+        .trophy img {
+            width: 4rem;
+            height: 4rem;
+        }
+
+        .winner .username {
+            font-size: 1.2rem;
+        }
+
+        .winner .time {
+            font-size: 1rem;
+        }
     }
 </style>

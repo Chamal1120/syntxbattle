@@ -2,6 +2,8 @@
     import { onMount } from "svelte";
     import { supabase } from "$lib/supabaseClient";
     import { matchManager } from "$lib/matchManager.svelte";
+    import RiSystemInformationLine from "~icons/ri/information-line";
+    import RiMapSwordLine from "~icons/ri/sword-line";
 
     //let { data } = $props();
     let problems = $state<any[]>([]);
@@ -18,17 +20,17 @@
     });
 </script>
 
-<div class="challenges-container">
-    <h1 class="challenges-title space-mono-bold">Select Your Challenge</h1>
+<div class="problem-container">
+    <h1 class="problem-title space-mono-bold">Select Your Problem</h1>
 
     {#if loading}
         <div class="loading-state">
             <p>Loading problems...</p>
         </div>
     {:else}
-        <div class="challenge-grid">
+        <div class="problem-grid">
             {#each problems as problem}
-                <div class="challenge-card">
+                <div class="problem-card">
                     <div class="card-header">
                         <h3>{problem.title}</h3>
                         <span
@@ -37,14 +39,24 @@
                             {problem.difficulty}
                         </span>
                     </div>
-                    <p>{problem.description}</p>
+                    <p class="card-description">{problem.description}</p>
+                    <div class="problem-actions">
+                    <button
+                        onclick={() => {}}
+                        class="more-info-btn"
+                    >
+                        <RiSystemInformationLine />
+                        More Info
+                    </button>
                     <button
                         onclick={() =>
                             matchManager.createMatch({ problemId: problem.id })}
                         class="battle-btn"
                     >
-                        Create match
+                        <RiMapSwordLine />
+                        Select
                     </button>
+                    </div>
                 </div>
             {/each}
         </div>
@@ -58,25 +70,25 @@
         color: var(--comment);
     }
     
-    .challenges-container {
+    .problem-container {
         padding: 0 1rem;
     }
 
-    .challenges-title {
+    .problem-title {
         text-align: center;
         line-height: 1.1;
         font-size: clamp(2rem, 6vw, 10rem);
         padding: 0 0 2rem 0;
     }
 
-    .challenge-grid {
+    .problem-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 1rem;
         padding: 1rem 0;
     }
 
-    .challenge-card {
+    .problem-card {
         background: var(--bg-card);
         border: 1px solid var(--border-default);
         padding: var(--space-lg);
@@ -87,6 +99,10 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: var(--space-md);
+    }
+
+    .card-description {
+        filter: brightness(0.8);
     }
 
     .difficulty {
@@ -100,15 +116,37 @@
         background: var(--accent-bright-alpha-10);
     }
 
+    .problem-actions {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+
+    .more-info-btn,
     .battle-btn {
         margin-top: var(--space-md);
+        background: var(--keyword);
         width: 100%;
-        background: var(--accent-bright);
         text-align: center;
         color: black;
         font-weight: bold;
         padding: 0.6rem;
         cursor: pointer;
         border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        position: relative;
+        transition: all 0.1s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+        &:active {
+            transform: scale(0.94);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            filter: brightness(1.15);
+        }
     }
+
+
 </style>

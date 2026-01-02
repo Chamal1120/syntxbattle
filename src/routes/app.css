@@ -89,6 +89,26 @@
     }
 }
 
+@media (max-width: 768px) { 
+    .hide-on-mobile {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) { 
+    .hide-on-desktop {
+        display: none;
+    }
+}
+
+@media (pointer: coarse) {
+    .hide-on-touch {
+        display: none;
+    }
+}
+
+
+
 
 /* global styles reset */
 *, *::before, *::after {
@@ -165,6 +185,7 @@ button {
     color: var(--fg-main);
     background: var(bg-main);
     cursor: var(--cursor-pointer);
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* Reset all input styles */
