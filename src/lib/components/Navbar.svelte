@@ -4,6 +4,7 @@
      * * @author Chamal Mallawaarachchi
      */
     import { getBotAvatar } from "$lib/userUtils";
+    import { goto } from "$app/navigation";
     import { supabase } from "$lib/supabaseClient";
     import type { User } from '@supabase/supabase-js';
 
@@ -21,10 +22,10 @@
 </script>
 
 <nav>
-    <div>
+    <button class="nav-logo-button" onclick={goto('/')}>
         <h1 class="space-mono-bold nav-logo-main">SyntXBattle</h1>
         <p class="vtag space-mono-bold">v0.1.0</p>
-    </div>
+    </button>
     {#if user}
         <div class="user-menu">
             <button class="avatar-btn" onclick={toggleMenu}>
@@ -38,7 +39,7 @@
             {#if showMenu}
                 <div class="menu-popup">
                     <div class="user-email">{user.email}</div>
-                    <button onclick={handleLogout} class="logout-btn">Sign Out</button>
+                    <button onclick={handleLogout} class="logout-btn">Log Out</button>
                 </div>
             {/if}
         </div>
@@ -52,18 +53,37 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1rem 0;
+        padding: 1rem 1rem;
         margin-bottom: 1rem;
         background-color: var(--bg-main);
         z-index: 100;
     }
 
+    .nav-logo-button {
+        background-color: transparent;
+        cursor: poiner;
+        -webkit-tap-highlight-color: transparent;
+    }
+
     .nav-logo-main {
+        display: inline-block;
+        padding: 0;
         anchor-name: --logo-text;
+        background-color: transparent;
         font-size: 1.5rem;
         color: var(--string);
         transform: rotate(-3deg);
+        transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: transform;
 
+    }
+
+    .nav-logo-button:active .nav-logo-main {
+        transform: rotate(2deg);
+    }
+
+    .nav-logo-button:active .vtag {
+        transform: rotate(-5deg);
     }
 
     .vtag {
@@ -87,13 +107,15 @@
     .avatar-btn {
         background: transparent;
         border: none;
-        padding: 0;
+        padding: 0 0.5rem 0 0;
         cursor: pointer;
     }
 
     .user-avatar {
         width: 40px;
         height: 40px;
+        border-radius: 50%;
+        padding: 10%;
         border: 2px solid var(--border-hover);
         transition: border-color 0.2s;
     }
@@ -111,6 +133,8 @@
         padding: 1rem;
         min-width: 200px;
         z-index: 1000;
+        --shadow-color: color-mix(in srgb, var(--bg-card), black 15%);
+        box-shadow: 0 10px 30px -5px var(--shadow-color);
     }
 
     .user-email {
@@ -125,6 +149,7 @@
         width: 100%;
         background: var(--error);
         color: var(--fg-main);
+        text-align: center;
         padding: 0.5rem;
         cursor: pointer;
         border: none;

@@ -18,17 +18,17 @@
     });
 </script>
 
-<div class="arena-container">
-    <h1>Select Your Challenge</h1>
+<div class="challenges-container">
+    <h1 class="challenges-title space-mono-bold">Select Your Challenge</h1>
 
     {#if loading}
         <div class="loading-state">
             <p>Loading problems...</p>
         </div>
     {:else}
-        <div class="problem-grid">
+        <div class="challenge-grid">
             {#each problems as problem}
-                <div class="problem-card">
+                <div class="challenge-card">
                     <div class="card-header">
                         <h3>{problem.title}</h3>
                         <span
@@ -43,7 +43,7 @@
                             matchManager.createMatch({ problemId: problem.id })}
                         class="battle-btn"
                     >
-                        Create 1v1
+                        Create match
                     </button>
                 </div>
             {/each}
@@ -57,14 +57,26 @@
         margin-top: var(--space-2xl);
         color: var(--comment);
     }
-
-    .problem-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: var(--space-lg);
+    
+    .challenges-container {
+        padding: 0 1rem;
     }
 
-    .problem-card {
+    .challenges-title {
+        text-align: center;
+        line-height: 1.1;
+        font-size: clamp(2rem, 6vw, 10rem);
+        padding: 0 0 2rem 0;
+    }
+
+    .challenge-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+        padding: 1rem 0;
+    }
+
+    .challenge-card {
         background: var(--bg-card);
         border: 1px solid var(--border-default);
         padding: var(--space-lg);
@@ -92,6 +104,7 @@
         margin-top: var(--space-md);
         width: 100%;
         background: var(--accent-bright);
+        text-align: center;
         color: black;
         font-weight: bold;
         padding: 0.6rem;

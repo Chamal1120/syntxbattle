@@ -13,7 +13,6 @@
     import { goto } from "$app/navigation";
     import { dev } from "$app/environment";
     import { supabase } from "$lib/supabaseClient";
-    import { page } from "$app/state";
     import { getBotAvatar } from "$lib/userUtils";
     import type { PageData } from "./$types";
 
@@ -24,6 +23,7 @@
     let matchInfo = $state<any>(null);
     let joining = $state(false);
     let channel: any;
+    let matchId = $state(data.matchId);
 
     $inspect("participants:", participants);
     $inspect("matchInfo:", matchInfo);
@@ -87,7 +87,7 @@
 
     function handleBattleStart({ payload }: any) {
         if (dev) console.log("Broadcast: battle starting", payload);
-        goto(`/arena/${page.params.id}`);
+        goto(`/arena/${matchId}`);
     }
 
     async function handleSubscribed(matchId: string, matchInfo: any) {
@@ -216,15 +216,15 @@
                 status: "active",
                 started_at: new Date().toISOString(),
             })
-            .eq("id", page.params.id);
+            .eq("id", matchId);
 
         channel.send({
             type: "broadcast",
             event: "battle_start",
-            payload: { match_id: page.params.id },
+            payload: { match_id: matchId },
         });
 
-        goto(`/arena/${page.params.id}`);
+        goto(`/arena/${matchId}`);
     }
 
     /**
@@ -252,7 +252,7 @@
         supabase
             .from("match_participants")
             .delete()
-            .eq("match_id", page.params.id)
+            .eq("match_id", matchId)
             .eq("user_id", data.user.id);
     }
 
@@ -263,8 +263,6 @@
     //-------------------------- LifeCycle Hooks ------------------------------
 
     onMount(async () => {
-        const matchId = page.params.id;
-
         if (matchId === undefined) {
             if (dev) console.error(`matchId is undefined`);
             return;

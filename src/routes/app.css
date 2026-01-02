@@ -69,25 +69,25 @@
     }
 }
 
- @media (prefers-reduced-motion: reduce) {
-     *,
-     *::before,
-     *::after {
-         animation-duration: 0.01ms !important;
-         animation-iteration-count: 1 !important;
-         transition-duration: 0.01ms !important;
-     }
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 
-     /* Allow interactive transitions (hover, focus, click) - they're
-user-triggered */
-     *:hover,
-     *:focus,
-     *:active,
-     button:hover,
-     a:hover {
-         transition-duration: 0.2s !important;
-     }
- }
+    /* Allow interactive transitions (hover, focus, click) - they're
+    ser-triggered */
+    *:hover,
+    *:focus,
+    *:active,
+    button:hover,
+    a:hover {
+        transition-duration: 0.2s !important;
+    }
+}
 
 
 /* global styles reset */
@@ -133,8 +133,6 @@ button, div {
 }
 
 html, body {
-    max-inline: 1280px;
-    margin-inline: auto;
     background-color: var(--bg-main);
     color: var(--fg-main);
     line-height: 1.5;
@@ -143,10 +141,12 @@ html, body {
     font-family: system-ui, -apple-system, sans-serif;
     margin: 0;
     cursor: var(--cursor-default);
+    padding: 0;
 }
 
-body {
-    padding: 0;
+.body-content {
+    max-inline-size: 1280px;
+    margin-inline: auto;
 }
 
 h1, h2, h3, h4, h5, h6 {

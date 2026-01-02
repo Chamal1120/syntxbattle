@@ -189,9 +189,10 @@
         class="space-mono-bold extra-styles"
         style="transform: translateY({titleY.current}px) rotate({titleRotate.current}deg); opacity: {titleOpacity.current}; will-change: transform, opacity"
     >
-        SyntXBattle
+        <span class="title-inner">SyntXBattle</span>
     </h1>
     <p
+        class="tagline"
         style="transform: translateX({pTagX.current}px); opacity: {pTagOpacity.current}; will-change: transform, opacity"
     >
         Code with your friends like in a multiplayer game
@@ -216,6 +217,8 @@
         text-align: center;
         height: 100dvh;
         position: relative;
+        padding: 0 2rem;
+        gap: clamp(0.5rem, 2vh, 2rem);
     }
 
     .motion-toggle {
@@ -242,6 +245,7 @@
 
     .motion-toggle:hover {
         background: var(--accent-bright);
+        color: var(--bg-main);
         border-color: var(--accent-bright);
         transform: scale(1.1);
     }
@@ -258,12 +262,22 @@
         perspective: 1000px;
     }
 
+    .tagline {
+        font-size: 1rem;
+        max-width: 90%;
+        margin: 0;
+    }
+
+    .actions {
+        margin-top: clamp(0.5rem, 1vh, 1rem);
+    }
+
     button:not(.motion-toggle) {
         padding: var(--space-md) var(--space-xl);
         border-radius: 0;
         color: var(--fg-main);
         background: var(--bg-main);
-        margin: 2rem;
+        margin: 0;
         outline: 2px solid var(--fg-main);
         font-size: 1.1rem;
         background: linear-gradient(
@@ -284,11 +298,66 @@
     }
 
     .extra-styles {
-        font-size: clamp(5rem, 10vw, 15rem);
+        font-size: clamp(3rem, 12vw, 12rem);
         color: var(--string);
         transform: rotate(-3deg);
-        padding: 0.8vw;
+        padding: 2rem 1rem;
         margin: 0;
+        width: 100%;
+        word-break: keep-all;
+        overflow-wrap: normal;
+        white-space: nowrap;
+        line-height: 1;
+        overflow: visible;
+    }
+
+    .title-inner {
+        display: inline-block;
+    }
+
+    @media (max-width: 640px) {
+        .extra-styles {
+            font-size: clamp(2.2rem, 13vw, 12rem);
+            padding: 0.5rem;
+        }
+        
+        .centered-container {
+            padding: 0 0.5rem;
+            gap: clamp(0.75rem, 2vh, 1.5rem);
+        }
+
+        .tagline {
+            font-size: 0.85rem;
+            max-width: 95%;
+            padding: 0 1rem;
+        }
+
+        .actions {
+            margin-top: clamp(0.5rem, 1.5vh, 1rem);
+        }
+
+        button:not(.motion-toggle) {
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+        }
+    }
+
+    @media (min-width: 641px) and (max-width: 1024px) {
+        .extra-styles {
+            font-size: clamp(3rem, 10vw, 12rem);
+        }
+
+        .tagline {
+            font-size: 0.95rem;
+        }
+
+        .centered-container {
+            gap: clamp(1rem, 2.5vh, 1.75rem);
+        }
+
+        button:not(.motion-toggle) {
+            font-size: 1.05rem;
+        }
     }
 </style>
 

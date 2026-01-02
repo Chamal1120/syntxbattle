@@ -37,4 +37,7 @@
     <Navbar user={data.user} />
 {/if}
 
-{@render children()}
+<main class="body-content">
+    {@render children()}
+</main>
+
