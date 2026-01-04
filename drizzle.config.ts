@@ -7,7 +7,7 @@ export default defineConfig({
     dialect: 'postgresql',
     dbCredentials: { url: process.env.DATABASE_URL },
     verbose: true,
-    tablesFilter: ["profiles", "leaderboard", "problems", "matches", "match_participants"],
-    schemaFilter: ["public"], 
+    tablesFilter: ['profiles', 'leaderboard', 'problems', 'matches', 'match_participants'],
+    schemaFilter: ['public'],
     strict: true,
 });

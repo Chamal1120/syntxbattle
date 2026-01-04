@@ -1,9 +1,7 @@
 /**
-* Syntxbattle - Styles
+* Syntxbattle - Global Styles
 * @author Chamal Mallawaarachchi
 */
-
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
     /* Main Surfaces */
@@ -12,13 +10,13 @@
     --bg-card: #252530;
     --bg-hover: #252530;
     --fg-main: #cdcdcd;
-    
+
     /* Borders & Lines */
     --border-dim: #252530;
     --border-default: #606079;
     --border-hover: #606079;
     --border-float: #cdcdcd;
-    
+
     /* Syntax & Accents */
     --accent: #aeaed1;
     --accent-bright: #7fa563;
@@ -27,21 +25,21 @@
     --string: #f3be7c;
     --number: #f3be7c;
     --comment: #606079;
-    
+
     /* Status */
     --error: #d8647e;
     --warning: #f3be7c;
     --success: #7fa563;
-    
+
     /* UI States */
     --selection: #606079;
-    
+
     /* Opacity variants */
-    --accent-alpha-10: rgba(174, 174, 209, 0.1);
-    --accent-bright-alpha-10: rgba(127, 165, 99, 0.1);
-    --accent-bright-alpha-20: rgba(127, 165, 99, 0.2);
-    --accent-bright-alpha-30: rgba(127, 165, 99, 0.3);
-    
+    --accent-alpha-10: rgb(174 174 209 / 10%);
+    --accent-bright-alpha-10: rgb(127 165 99 / 10%);
+    --accent-bright-alpha-20: rgb(127 165 99 / 20%);
+    --accent-bright-alpha-30: rgb(127 165 99 / 30%);
+
     /* Spacing */
     --space-xs: 0.25rem;
     --space-sm: 0.5rem;
@@ -50,7 +48,7 @@
     --space-xl: 2rem;
     --space-2xl: 3rem;
     --space-3xl: 4rem;
-    
+
     /* Border radius */
     --radius-sm: 4px;
     --radius-md: 6px;
@@ -59,13 +57,12 @@
     --radius-2xl: 20px;
     --radius-full: 50px;
     --radius-circle: 50%;
-
     --view-transition-duration: 0.4s;
 
     /* Smooth fade-in/out for the whole page */
     ::view-transition-old(root),
     ::view-transition-new(root) {
-      animation-duration: var(--view-transition-duration);
+        animation-duration: var(--view-transition-duration);
     }
 }
 
@@ -78,24 +75,22 @@
         transition-duration: 0.01ms !important;
     }
 
-    /* Allow interactive transitions (hover, focus, click) - they're
-    ser-triggered */
     *:hover,
     *:focus,
     *:active,
     button:hover,
     a:hover {
-        transition-duration: 0.2s !important;
+        transition-duration: 0.1s !important;
     }
 }
 
-@media (max-width: 768px) { 
+@media (width <= 768px) {
     .hide-on-mobile {
         display: none;
     }
 }
 
-@media (min-width: 768px) { 
+@media (width >= 768px) {
     .hide-on-desktop {
         display: none;
     }
@@ -107,61 +102,67 @@
     }
 }
 
-
-
-
-/* global styles reset */
-*, *::before, *::after {
-    /* box-sizing: border-box; */
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
 }
 
-/* global typography */
-p, h2, h3, h4, h5, h6 {
+p,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-weight: 700;
 }
 
 /* global border radius reset */
-button, div {
+button,
+div {
     border-radius: 0;
     font-weight: 700;
 }
 
 .space-mono-regular {
-  font-family: "Space Mono", monospace;
-  font-weight: 400;
-  font-style: normal;
+    font-style: normal;
+    font-weight: 400;
+    font-family: 'Space Mono', monospace;
 }
 
 .space-mono-bold {
-  font-family: "Space Mono", monospace;
-  font-weight: 700;
-  font-style: normal;
+    font-style: normal;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
 }
 
 .space-mono-regular-italic {
-  font-family: "Space Mono", monospace;
-  font-weight: 400;
-  font-style: italic;
+    font-style: italic;
+    font-weight: 400;
+    font-family: 'Space Mono', monospace;
 }
 
 .space-mono-bold-italic {
-  font-family: "Space Mono", monospace;
-  font-weight: 700;
-  font-style: italic;
+    font-style: italic;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
 }
 
-html, body {
+html,
+body {
+    margin: 0;
+    padding: 0;
     background-color: var(--bg-main);
     color: var(--fg-main);
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
     color-scheme: dark;
-    font-family: system-ui, -apple-system, sans-serif;
-    margin: 0;
+    line-height: 1.5;
+    font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
     cursor: var(--cursor-default);
-    padding: 0;
+    -webkit-font-smoothing: antialiased;
 }
 
 .body-content {
@@ -169,23 +170,42 @@ html, body {
     margin-inline: auto;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     color: var(--fg-main);
+}
+
+a,
+button,
+input[type='submit'],
+input[type='button'],
+select,
+[role='button'],
+[onclick] {
+    cursor: var(--cursor-pointer);
 }
 
 button {
     appearance: none;
-    border: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    border: none;
     outline: none;
-    font: inherit;
+    background: var(--bg-main);
     color: inherit;
-    text-align: inherit;
     color: var(--fg-main);
-    background: var(bg-main);
+    font: inherit;
+    text-align: inherit;
     cursor: var(--cursor-pointer);
     -webkit-tap-highlight-color: transparent;
+}
+
+button:active {
+    transform: scale(0.98);
 }
 
 /* Reset all input styles */
@@ -193,19 +213,16 @@ input,
 textarea,
 select {
     appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    margin: 0;
+    padding: 0;
     border: none;
+    border-radius: 0;
     outline: none;
     background: none;
-    padding: 0;
-    margin: 0;
-    font: inherit;
     color: inherit;
-    border-radius: 0;
+    font: inherit;
 }
 
-/* Remove all input pseudo-elements and browser decorations */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button,
 input::-webkit-search-decoration,
@@ -218,10 +235,8 @@ input::-ms-reveal,
 input::-ms-clear {
     display: none !important;
     appearance: none !important;
-    -webkit-appearance: none !important;
 }
 
-/* Remove all states and animations */
 input:hover,
 input:focus,
 input:active,
@@ -234,25 +249,16 @@ select:hover,
 select:focus,
 select:active,
 select:focus-visible {
-    outline: none;
     border: none;
-    box-shadow: none;
+    outline: none;
     background: none;
+    box-shadow: none;
 }
 
-/* Remove autocomplete styling */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    -webkit-box-shadow: none;
     box-shadow: none;
     transition: background-color 5000s ease-in-out 0s;
 }
-
-/* Apply pointer cursor to all interactive elements */
-a, button, input[type="submit"], input[type="button"], 
-select, [role="button"], [onclick] {
-    cursor: var(--cursor-pointer);
-}
-

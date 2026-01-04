@@ -1,0 +1,12 @@
+# SvelteKit generated files
+.svelte-kit
+build
+dist
+
+# Package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build logs
+npm-debug.log*

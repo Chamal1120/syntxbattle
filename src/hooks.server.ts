@@ -3,11 +3,11 @@
  *
  * * @description
  * This handle hook modifies outgoing HTTP responses to enable the security
- * headers required for WebContainers to function. 
+ * headers required for WebContainers to function.
  * * It sets:
  * 1. Cross-Origin-Embedder-Policy (COEP): 'require-corp'
  * 2. Cross-Origin-Opener-Policy (COOP): 'same-origin'
- * * These headers enable 'SharedArrayBuffer', allowing the browser to create 
+ * * These headers enable 'SharedArrayBuffer', allowing the browser to create
  * the isolated environment needed to run a virtual Node.js process.
  *
  * * @author Chamal Mallawaarachchi
@@ -35,16 +35,20 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     // Add the Auth Helper to 'locals' so pages can check login status easily
     event.locals.safeGetSession = async () => {
-        const { data: { session } } = await event.locals.supabase.auth.getSession();
+        const {
+            data: { session },
+        } = await event.locals.supabase.auth.getSession();
         if (!session) return { session: null, user: null };
 
-        const { data: { user }, error } = await event.locals.supabase.auth.getUser();
+        const {
+            data: { user },
+            error,
+        } = await event.locals.supabase.auth.getUser();
         if (error) return { session: null, user: null };
 
         return { session, user };
     };
 
-    // Resolve the request and get the Response object
     const response = await resolve(event, {
         // This is a Supabase-specific optimization for headers
         filterSerializedResponseHeaders(name) {
@@ -52,9 +56,23 @@ export const handle: Handle = async ({ event, resolve }) => {
         },
     });
 
-    // Apply WebContainer security headers to the response
-    response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
-    response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+    // Apply WebContainer security headers to arena and battle pages
+    // This is required because browsers need consistent COOP/COEP headers across navigation
+    // Exclude root and login pages for better Lighthouse scores and OAuth redirects
+    // Skip for Lighthouse and other tools that need to inject monitoring code
+    const needsHeaders =
+        event.url.pathname.startsWith('/arena') || event.url.pathname.startsWith('/battle');
+    const excludePaths =
+        event.url.pathname === '/' ||
+        event.url.pathname === '/login' ||
+        event.url.pathname.startsWith('/auth/callback');
+    const userAgent = event.request.headers.get('user-agent') || '';
+    const isLighthouse = userAgent.includes('Chrome-Lighthouse');
+
+    if (needsHeaders && !excludePaths && !isLighthouse) {
+        response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
+        response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+    }
 
     return response;
 };

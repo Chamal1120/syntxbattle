@@ -1,6 +1,6 @@
 <script lang="ts">
     /**
-     * Syntxbattle - Match Summary 
+     * Syntxbattle - Match Summary
      *
      * @description
      * Displays final match results with leaderboard showing all participants
@@ -8,83 +8,31 @@
      *
      * @author Chamal Mallawaarachchi
      */
-    import { onMount } from "svelte";
-    import { dev } from "$app/environment";
-    import { goto } from "$app/navigation";
-    import { supabase } from "$lib/supabaseClient";
-    import type { PageData } from "./$types";
+    import { goto } from '$app/navigation';
+    import type { PageData } from './$types';
 
     let { data }: { data: PageData } = $props();
 
-    let participants = $state<any[]>([]);
-    let matchInfo = $state<any>(null);
-    let loading = $state(true);
-
-    onMount(async () => {
-        const { data: match, error: matchError } = await supabase
-            .from("matches")
-            .select("*, problems(*)")
-            .eq("id", data.matchId)
-            .single();
-
-        if (matchError) {
-            if (dev) console.error("Error fetching match:", matchError.message);
-            return;
-        }
-
-        matchInfo = match;
-
-        const { data: initialParts, error: partsError } = await supabase
-            .from("match_participants")
-            .select("user_id, status, finished_at, completion_time_ms")
-            .eq("match_id", data.matchId);
-
-        if (dev) console.log("Fetched participants:", initialParts);
-
-        if (partsError) {
-            if (dev)
-                console.error(
-                    "Error fetching participants:",
-                    partsError.message,
-                );
-        }
-
-        const userIds = (initialParts || []).map((p) => p.user_id);
-        const { data: profilesData } = await supabase
-            .from("profiles")
-            .select("id, username")
-            .in("id", userIds);
-
-        const usernameMap = new Map(
-            (profilesData || []).map((p) => [p.id, p.username]),
-        );
-
-        participants = (initialParts || [])
-            .map((p) => ({
-                ...p,
-                username: usernameMap.get(p.user_id) || "Unknown",
-            }))
-            .sort((a, b) => {
-                if (a.completion_time_ms && b.completion_time_ms) {
-                    return a.completion_time_ms - b.completion_time_ms;
-                }
-                return 0;
-            });
-
-        if (dev) console.log("Participants with usernames:", participants);
-        loading = false;
-    });
+    let participants = $derived(
+        (data.participants || []).sort((a: any, b: any) => {
+            if (a.completion_time_ms && b.completion_time_ms) {
+                return a.completion_time_ms - b.completion_time_ms;
+            }
+            return 0;
+        })
+    );
+    let matchInfo = $derived(data.match);
 
     function formatTime(ms: number | null): string {
-        if (!ms) return "DNF";
+        if (!ms) return 'DNF';
         const seconds = Math.floor(ms / 1000);
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
     function newMatch() {
-        goto("/battle");
+        goto('/battle');
     }
 </script>
 
@@ -92,9 +40,7 @@
     <div class="summary-card">
         <h1>Match Summary</h1>
 
-        {#if loading}
-            <p>Loading results...</p>
-        {:else if matchInfo}
+        {#if matchInfo}
             <h2>{matchInfo.problems.title}</h2>
 
             <div class="podium">
@@ -125,23 +71,15 @@
                     </thead>
                     <tbody>
                         {#each participants as participant, index}
-                            <tr
-                                class={participant.user_id === data.user.id
-                                    ? "current-user"
-                                    : ""}
-                            >
+                            <tr class={participant.user_id === data.user.id ? 'current-user' : ''}>
                                 <td class="rank">#{index + 1}</td>
                                 <td class="participant">{participant.username}</td>
-                                <td class="time"
-                                    >{formatTime(
-                                        participant.completion_time_ms,
-                                    )}</td
-                                >
+                                <td class="time">{formatTime(participant.completion_time_ms)}</td>
                                 <td class="status-cell">
                                     <span class="status {participant.status}">
-                                        {participant.status === "finished"
-                                            ? "Completed"
-                                            : "Did not complete"}
+                                        {participant.status === 'finished'
+                                            ? 'Completed'
+                                            : 'Did not complete'}
                                     </span>
                                 </td>
                             </tr>
@@ -150,9 +88,9 @@
                 </table>
             </div>
 
-            <button class="new-match-btn" onclick={newMatch}>
-                Start New Match
-            </button>
+            <button class="new-match-btn" onclick={newMatch}> Start New Match </button>
+        {:else}
+            <p>Loading match data...</p>
         {/if}
     </div>
 </div>
@@ -160,22 +98,22 @@
 <style>
     .summary-container {
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
         min-height: 100vh;
         padding: 1rem;
         background: var(--bg-main);
     }
 
     .summary-card {
-        max-width: 800px;
         width: 100%;
+        max-width: 800px;
         text-align: center;
     }
 
     h1 {
-        color: var(--accent);
         margin-bottom: 0.5rem;
+        color: var(--accent);
         font-size: 2.5rem;
     }
 
@@ -189,11 +127,11 @@
     }
 
     .trophy {
-        font-size: 4rem;
-        margin-bottom: 0.5rem;
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+        font-size: 4rem;
     }
 
     .trophy img {
@@ -203,15 +141,15 @@
     }
 
     .winner h3 {
-        color: var(--accent);
         margin-bottom: 0.5rem;
+        color: var(--accent);
     }
 
     .winner .username {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: var(--fg-main);
         margin-bottom: 0.25rem;
+        color: var(--fg-main);
+        font-weight: bold;
+        font-size: 1.5rem;
     }
 
     .winner .time {
@@ -230,37 +168,37 @@
 
     table {
         width: 100%;
-        border-collapse: collapse;
         margin-bottom: 2rem;
+        border-collapse: collapse;
     }
 
     th {
-        text-align: left;
         padding: 0.75rem;
         border-bottom: 2px solid var(--border-dim);
         color: var(--comment);
         font-size: 0.9rem;
+        text-align: left;
         text-transform: uppercase;
     }
 
     th.col-rank {
-        text-align: left;
         width: 15%;
+        text-align: left;
     }
 
     th.col-participant {
-        text-align: left;
         width: 35%;
+        text-align: left;
     }
 
     th.col-time {
-        text-align: center;
         width: 20%;
+        text-align: center;
     }
 
     th.col-status {
-        text-align: center;
         width: 30%;
+        text-align: center;
     }
 
     td {
@@ -270,8 +208,8 @@
     }
 
     td.rank {
-        font-weight: bold;
         color: var(--accent);
+        font-weight: bold;
         text-align: left;
     }
 
@@ -280,9 +218,9 @@
     }
 
     td.time {
-        text-align: center;
-        font-family: monospace;
         font-size: 1.1rem;
+        font-family: monospace;
+        text-align: center;
     }
 
     td.status-cell {
@@ -295,8 +233,8 @@
 
     .status {
         padding: 0.25rem 0.75rem;
-        font-size: 0.8rem;
         font-weight: bold;
+        font-size: 0.8rem;
     }
 
     .status.finished {
@@ -310,10 +248,10 @@
     }
 
     .new-match-btn {
+        padding: 1rem 2rem;
+        border: none;
         background: var(--accent);
         color: var(--bg-main);
-        border: none;
-        padding: 1rem 2rem;
         font-weight: bold;
         font-size: 1.1rem;
         cursor: pointer;
@@ -337,7 +275,8 @@
             font-size: 0.9rem;
         }
 
-        th, td {
+        th,
+        td {
             padding: 0.5rem;
         }
 
@@ -363,8 +302,8 @@
         }
 
         .status {
-            font-size: 0.7rem;
             padding: 0.2rem 0.4rem;
+            font-size: 0.7rem;
         }
 
         .trophy img {

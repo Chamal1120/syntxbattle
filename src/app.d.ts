@@ -7,24 +7,24 @@
 import { SupabaseClient, Session, User } from '@supabase/supabase-js';
 import { WebContainer } from '@webcontainer/api';
 declare global {
-	namespace App {
-		// interface Error {}
-		// interface Platform {}
+    namespace App {
+        // interface Error {}
+        // interface Platform {}
         interface Locals {
-			supabase: SupabaseClient;
-			safeGetSession: () => Promise<{ session: Session | null; user: User | null }>;
-		}
-		interface PageData {
-			session: Session | null;
-			user: User | null;
-		}
-		// interface PageData {}
-		// interface PageState {}
-	}
+            supabase: SupabaseClient;
+            safeGetSession: () => Promise<{ session: Session | null; user: User | null }>;
+        }
+        interface PageData {
+            session: Session | null;
+            user: User | null;
+        }
+        // interface PageData {}
+        // interface PageState {}
+    }
 
     interface Window {
-		__wc: WebContainer;
-	}
+        __wc: WebContainer;
+    }
 }
 
 export {};

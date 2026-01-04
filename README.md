@@ -1,6 +1,7 @@
 # SyntXBattle
 
-# Environment Variables
+### Environment Variables
+env-vars
 ```
 DATABASE_URL="postgres://user:password@host:port/db-name"
 PUBLIC_SUPABASE_URL="https://<your-id>supabase.co"

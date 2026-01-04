@@ -4,17 +4,21 @@
      *
      * @author Chamal Mallwaarachchi
      */
-    import { Tween, Spring } from "svelte/motion";
-    import { cubicIn, cubicOut } from "svelte/easing";
-    import { goto } from "$app/navigation";
-    import { onMount } from "svelte";
-    import PauseLine from "~icons/ri/pause-line";
-    import PlayLine from "~icons/ri/play-line";
+    import { Tween, Spring } from 'svelte/motion';
+    import { cubicIn, cubicOut } from 'svelte/easing';
+    import { goto } from '$app/navigation';
+    import { onMount } from 'svelte';
+    import PauseLine from '~icons/ri/pause-line';
+    import PlayLine from '~icons/ri/play-line';
+
+    const title = 'SyntXBattle - Code with Friends';
+    const description = 'Code with your friends like in a multiplayer game';
 
     let animating = $state(false);
     let prefersReducedMotion = $state(false);
     let userMotionPreference = $state<boolean | null>(null);
     let mounted = $state(false);
+    let hasAnimated = $state(false);
 
     let pTagX = new Spring(0, {
         stiffness: 0.02,
@@ -27,38 +31,36 @@
     });
 
     onMount(() => {
-        const mediaQuery = window.matchMedia(
-            "(prefers-reduced-motion: reduce)",
-        );
+        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
         const shouldReduce = mediaQuery.matches;
 
         // Load reduce motion preference from localStorage
-        const saved = localStorage.getItem("motionPreference");
+        const saved = localStorage.getItem('motionPreference');
         if (saved !== null) {
-            userMotionPreference = saved === "true";
+            userMotionPreference = saved === 'true';
             prefersReducedMotion = !userMotionPreference;
         } else {
             prefersReducedMotion = shouldReduce;
         }
 
-        // Set initial position before marking as mounted
+        // Immediately mark as mounted for faster FCP
+        mounted = true;
+
+        // Set initial position after mount
         if (!prefersReducedMotion) {
             pTagX.stiffness = 1;
             pTagX.damping = 1;
             pTagX.target = -800;
 
-            // Wait a tick, then restore spring settings
-            setTimeout(() => {
+            // Restore spring settings on next frame
+            requestAnimationFrame(() => {
                 pTagX.stiffness = 0.01;
                 pTagX.damping = 0.15;
-                mounted = true;
-            }, 10);
-        } else {
-            mounted = true;
+            });
         }
 
         // Listen for changes
-        mediaQuery.addEventListener("change", (e) => {
+        mediaQuery.addEventListener('change', (e) => {
             if (userMotionPreference === null) {
                 prefersReducedMotion = e.matches;
             }
@@ -73,7 +75,7 @@
 
     function toggleMotion() {
         userMotionPreference = prefersReducedMotion;
-        localStorage.setItem("motionPreference", String(userMotionPreference));
+        localStorage.setItem('motionPreference', String(userMotionPreference));
     }
 
     // Entrance animations
@@ -110,8 +112,10 @@
     $effect(() => {
         if (!mounted) return;
 
-        // Small delay to let component render first
-        setTimeout(() => {
+        // Trigger animations on next frame after mount
+        requestAnimationFrame(() => {
+            hasAnimated = true;
+
             if (prefersReducedMotion) {
                 buttonY.set(0, { duration: 0 });
                 titleY.set(0, { duration: 0 });
@@ -130,7 +134,7 @@
                 pTagX.target = 0;
                 pTagOpacity.target = 1;
             }
-        }, 50);
+        });
     });
 
     async function startBattleAnim() {
@@ -163,20 +167,49 @@
             await new Promise((r) => setTimeout(r, 700));
         }
 
-        goto("/battle");
+        goto('/battle');
     }
 </script>
+
+<svelte:head>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <style>
+        .hero-title:not(.animating) {
+            visibility: visible !important;
+            transform: rotate(-3deg) !important;
+            opacity: 0.001 !important;
+        }
+        .hero-tagline:not(.animating) {
+            visibility: visible !important;
+            transform: translateX(0) !important;
+            opacity: 0.001 !important;
+        }
+        .hero-button:not(.animating) {
+            visibility: visible !important;
+            transform: translateY(0) rotate(0deg) !important;
+            opacity: 0.001 !important;
+        }
+    </style>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="SyntXBattle" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+</svelte:head>
 
 <div class="centered-container">
     <button
         class="motion-toggle"
         onclick={toggleMotion}
-        aria-label={prefersReducedMotion
-            ? "Enable animations"
-            : "Disable animations"}
-        title={prefersReducedMotion
-            ? "Enable animations"
-            : "Disable animations"}
+        aria-label={prefersReducedMotion ? 'Enable animations' : 'Disable animations'}
+        title={prefersReducedMotion ? 'Enable animations' : 'Disable animations'}
     >
         {#if prefersReducedMotion}
             <PlayLine />
@@ -186,68 +219,69 @@
     </button>
 
     <h1
-        class="space-mono-bold extra-styles"
-        style="transform: translateY({titleY.current}px) rotate({titleRotate.current}deg); opacity: {titleOpacity.current}; will-change: transform, opacity"
+        class="space-mono-bold extra-styles hero-title"
+        class:animating={hasAnimated}
+        style="transform: translateY({titleY.current}px) rotate({titleRotate.current}deg); opacity: {titleOpacity.current};"
     >
         <span class="title-inner">{`{SyntXBattle}`}</span>
     </h1>
     <p
-        class="tagline"
-        style="transform: translateX({pTagX.current}px); opacity: {pTagOpacity.current}; will-change: transform, opacity"
+        class="tagline hero-tagline"
+        class:animating={hasAnimated}
+        style="transform: translateX({pTagX.current}px); opacity: {pTagOpacity.current};"
     >
         Code with your friends like in a multiplayer game
     </p>
 
     <div
-        class="actions"
-        style="transform: translateY({buttonY.current}px) rotate({buttonRotate.current}deg); opacity: {buttonOpacity.current}; will-change: transform, opacity"
+        class="actions hero-button"
+        class:animating={hasAnimated}
+        style="transform: translateY({buttonY.current}px) rotate({buttonRotate.current}deg); opacity: {buttonOpacity.current};"
     >
-        <button onclick={startBattleAnim} disabled={animating}>
-            Start Battling
-        </button>
+        <button onclick={startBattleAnim} disabled={animating}> Start Battling </button>
     </div>
 </div>
 
 <style>
     .centered-container {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        height: 100dvh;
         position: relative;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100dvh;
         padding: 0 2rem;
         gap: clamp(0.5rem, 2vh, 2rem);
+        text-align: center;
     }
 
     .motion-toggle {
+        display: flex;
+        z-index: 1000;
         position: fixed;
         top: 1rem;
         right: 1rem;
+        align-items: center;
+        justify-content: center;
         width: 3rem;
         height: 3rem;
-        border-radius: 50%;
+        padding: 0;
         border: 2px solid var(--fg-main);
+        border-radius: 50%;
+        outline: 2px solid transparent;
+        outline-offset: 2px;
         background: var(--bg-main);
         color: var(--fg-main);
         font-size: 1.5rem;
         cursor: pointer;
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
         transition: all 0.2s ease;
-        outline: 2px solid transparent;
-        outline-offset: 2px;
     }
 
     .motion-toggle:hover {
+        transform: scale(1.1);
+        border-color: var(--accent-bright);
         background: var(--accent-bright);
         color: var(--bg-main);
-        border-color: var(--accent-bright);
-        transform: scale(1.1);
     }
 
     .motion-toggle:focus-visible {
@@ -259,13 +293,33 @@
     p {
         transform: translateZ(0);
         backface-visibility: hidden;
-        perspective: 1000px;
+        will-change: transform, opacity;
+    }
+
+    /* Override inline styles until JS kicks in - for getting a better LCP :) */
+    .hero-title:not(.animating),
+    .hero-tagline:not(.animating),
+    .hero-button:not(.animating) {
+        visibility: visible !important;
+        opacity: 0.001 !important;
+    }
+
+    .hero-title:not(.animating) {
+        transform: rotate(-3deg) !important;
+    }
+
+    .hero-tagline:not(.animating) {
+        transform: translateX(0) !important;
+    }
+
+    .hero-button:not(.animating) {
+        transform: translateY(0) rotate(0deg) !important;
     }
 
     .tagline {
-        font-size: 1rem;
         max-width: 90%;
         margin: 0;
+        font-size: 1rem;
     }
 
     .actions {
@@ -273,20 +327,16 @@
     }
 
     button:not(.motion-toggle) {
+        margin: 0;
         padding: var(--space-md) var(--space-xl);
         border-radius: 0;
-        color: var(--fg-main);
-        background: var(--bg-main);
-        margin: 0;
         outline: 2px solid var(--fg-main);
-        font-size: 1.1rem;
-        background: linear-gradient(
-            to top,
-            var(--accent-bright) 50%,
-            var(--bg-main) 50%
-        );
-        background-size: 100% 200%;
+        background: var(--bg-main);
+        background: linear-gradient(to top, var(--accent-bright) 50%, var(--bg-main) 50%);
         background-position: top;
+        background-size: 100% 200%;
+        color: var(--fg-main);
+        font-size: 1.1rem;
         transition:
             background-position 0.4s ease-in-out,
             color 0.3s;
@@ -298,16 +348,17 @@
     }
 
     .extra-styles {
-        font-size: clamp(3rem, 12vw, 12rem);
-        color: var(--string);
-        transform: rotate(-3deg);
-        padding: 2rem 1rem;
+        content-visibility: auto;
         margin: 0;
+        padding: 2rem 1rem;
+        overflow: visible;
+        transform: rotate(-3deg);
+        color: var(--string);
+        font-size: clamp(3rem, 12vw, 12rem);
+        line-height: 1;
+        white-space: nowrap;
         word-break: keep-all;
         overflow-wrap: normal;
-        white-space: nowrap;
-        line-height: 1;
-        overflow: visible;
     }
 
     .title-inner {
@@ -316,19 +367,19 @@
 
     @media (max-width: 640px) {
         .extra-styles {
-            font-size: clamp(2rem, 11vw, 12rem);
             padding: 0.5rem;
+            font-size: clamp(2rem, 11vw, 12rem);
         }
-        
+
         .centered-container {
             padding: 0 0.5rem;
             gap: clamp(0.75rem, 2vh, 1.5rem);
         }
 
         .tagline {
-            font-size: 0.85rem;
             max-width: 95%;
             padding: 0 1rem;
+            font-size: 0.85rem;
         }
 
         .actions {
@@ -336,8 +387,8 @@
         }
 
         button:not(.motion-toggle) {
-            font-size: 1rem;
             padding: 0.75rem 1.5rem;
+            font-size: 1rem;
         }
     }
 
@@ -359,4 +410,3 @@
         }
     }
 </style>
-
