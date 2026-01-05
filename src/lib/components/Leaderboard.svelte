@@ -8,7 +8,7 @@
      *
      * @author Chamal Mallawaarachchi
      */
-    
+
     interface LeaderboardProps {
         participants: any[];
         currentUserId?: string;

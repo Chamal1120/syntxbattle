@@ -31,6 +31,20 @@
     let currentUserStatus = $state('...');
     let channel: any;
     let supabase: any;
+    let vimMode = $state(false);
+
+    // Load vim preference from localStorage
+    if (browser) {
+        const saved = localStorage.getItem('syntxbattle-vim-mode');
+        vimMode = saved === 'true';
+    }
+
+    function toggleVim() {
+        vimMode = !vimMode;
+        if (browser) {
+            localStorage.setItem('syntxbattle-vim-mode', String(vimMode));
+        }
+    }
 
     $inspect('participants:', participants);
 
@@ -244,6 +258,9 @@
             <div class="toolbar">
                 <span class="filename">{problemTitle || 'solution.js'}</span>
                 <div class="toolbar-actions">
+                    <button class="vim-toggle" onclick={toggleVim} class:active={vimMode}>
+                        {vimMode ? 'VIM' : 'NORMAL'}
+                    </button>
                     <button onclick={runCode} disabled={!container || isRunning}>
                         {isRunning ? 'Running...' : 'Run'}
                     </button>
@@ -256,7 +273,7 @@
                     </button>
                 </div>
             </div>
-            <CodeEditor bind:value={code} />
+            <CodeEditor bind:value={code} bind:vimMode />
         </section>
 
         <section class="pane terminal">
@@ -266,10 +283,10 @@
             </div>
         </section>
     </div>
-    <Leaderboard participants={participants} currentUserId={data.user.id} />
+    <Leaderboard {participants} currentUserId={data.user.id} />
 </div>
 
-<LeaderboardMobile participants={participants} currentUserId={data.user.id} />
+<LeaderboardMobile {participants} currentUserId={data.user.id} />
 
 <style>
     .ide {
@@ -281,15 +298,15 @@
 
     .editor-column {
         display: flex;
-        flex-direction: column;
         flex: 1;
+        flex-direction: column;
         gap: 1rem;
     }
 
     .pane {
         display: flex;
-        flex-direction: column;
         flex: 1;
+        flex-direction: column;
         background: var(--bg-main);
     }
 
@@ -350,5 +367,27 @@
     .submit-btn:disabled {
         cursor: not-allowed;
         opacity: 0.5;
+    }
+
+    .vim-toggle {
+        padding: 4px 8px;
+        border: 1px solid var(--border-dim);
+        background: var(--bg-main);
+        color: var(--comment);
+        font-size: 0.7rem;
+        font-family: 'Fira Code', monospace;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .vim-toggle:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+    .vim-toggle.active {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--bg-main);
     }
 </style>

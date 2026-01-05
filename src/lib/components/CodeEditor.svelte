@@ -10,60 +10,79 @@
     import { onMount } from 'svelte';
     import { EditorView, basicSetup } from 'codemirror';
     import { javascript } from '@codemirror/lang-javascript';
-    //import { EditorState } from '@codemirror/state';
+    import { Compartment } from '@codemirror/state';
     import { syntaxHighlighting, HighlightStyle } from '@codemirror/language';
     import { tags } from '@lezer/highlight';
+    import { vim } from '@replit/codemirror-vim';
 
     interface EditorProps {
-        value: string;
+        value?: string;
         onchange?: (value: string) => void;
         disabled?: boolean;
+        vimMode?: boolean;
     }
 
-    let { value = $bindable(''), onchange, disabled = false }: EditorProps = $props();
+    let {
+        value = $bindable(''),
+        onchange,
+        disabled = false,
+        vimMode = $bindable(false),
+    }: EditorProps = $props();
 
     let container: HTMLDivElement;
     let view: EditorView;
 
+    // Compartment for dynamically toggling vim mode
+    const vimCompartment = new Compartment();
+
     // Vague theme for CM6
     const syntaxTheme = HighlightStyle.define([
-        { tag: tags.keyword, color: '#6e94b2' }, 
-        { tag: tags.controlKeyword, color: '#6e94b2' }, 
-        { tag: tags.operatorKeyword, color: '#6e94b2' }, 
-        { tag: tags.definitionKeyword, color: '#6e94b2' }, 
-        { tag: tags.modifier, color: '#6e94b2' }, 
-        
-        { tag: tags.function(tags.variableName), color: '#d8647e' }, 
-        { tag: tags.function(tags.propertyName), color: '#d8647e' }, 
-        
-        { tag: tags.string, color: '#f3be7c' }, 
-        { tag: tags.number, color: '#f3be7c' }, 
-        { tag: tags.bool, color: '#f3be7c' }, 
-        { tag: tags.null, color: '#f3be7c' }, 
-        
-        { tag: tags.variableName, color: '#cdcdcd' }, 
-        { tag: tags.propertyName, color: '#aeaed1' }, 
-        { tag: tags.definition(tags.variableName), color: '#cdcdcd' }, 
-        
-        { tag: tags.comment, color: '#606079', fontStyle: 'italic' }, 
+        { tag: tags.keyword, color: '#6e94b2' },
+        { tag: tags.controlKeyword, color: '#6e94b2' },
+        { tag: tags.operatorKeyword, color: '#6e94b2' },
+        { tag: tags.definitionKeyword, color: '#6e94b2' },
+        { tag: tags.modifier, color: '#6e94b2' },
+
+        { tag: tags.function(tags.variableName), color: '#d8647e' },
+        { tag: tags.function(tags.propertyName), color: '#d8647e' },
+
+        { tag: tags.string, color: '#f3be7c' },
+        { tag: tags.number, color: '#f3be7c' },
+        { tag: tags.bool, color: '#f3be7c' },
+        { tag: tags.null, color: '#f3be7c' },
+
+        { tag: tags.variableName, color: '#cdcdcd' },
+        { tag: tags.propertyName, color: '#aeaed1' },
+        { tag: tags.definition(tags.variableName), color: '#cdcdcd' },
+
+        { tag: tags.comment, color: '#606079', fontStyle: 'italic' },
         { tag: tags.lineComment, color: '#606079', fontStyle: 'italic' },
         { tag: tags.blockComment, color: '#606079', fontStyle: 'italic' },
-        
-        { tag: tags.operator, color: '#aeaed1' }, 
-        { tag: tags.punctuation, color: '#cdcdcd' }, 
+
+        { tag: tags.operator, color: '#aeaed1' },
+        { tag: tags.punctuation, color: '#cdcdcd' },
         { tag: tags.bracket, color: '#cdcdcd' },
-        
-        { tag: tags.className, color: '#7fa563' }, 
-        { tag: tags.typeName, color: '#7fa563' }, 
-        
-        { tag: tags.regexp, color: '#d8647e' }, 
-        { tag: tags.escape, color: '#d8647e' }, 
+
+        { tag: tags.className, color: '#7fa563' },
+        { tag: tags.typeName, color: '#7fa563' },
+
+        { tag: tags.regexp, color: '#d8647e' },
+        { tag: tags.escape, color: '#d8647e' },
     ]);
+
+    $effect(() => {
+        if (view) {
+            view.dispatch({
+                effects: vimCompartment.reconfigure(vimMode ? vim() : []),
+            });
+        }
+    });
 
     onMount(() => {
         view = new EditorView({
             doc: value,
             extensions: [
+                vimCompartment.of(vimMode ? vim() : []),
                 basicSetup,
                 javascript(),
                 syntaxHighlighting(syntaxTheme),
@@ -104,6 +123,11 @@
                     },
                     '.cm-cursor': {
                         borderLeftColor: 'var(--accent)',
+                    },
+                    // Vim cursor styling
+                    '.cm-fat-cursor': {
+                        backgroundColor: 'var(--accent)',
+                        color: 'var(--bg-main)',
                     },
                     // Autocomplete menu theming
                     '.cm-tooltip': {

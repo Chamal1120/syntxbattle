@@ -8,7 +8,7 @@
      * @author Chamal Mallawaarachchi
      */
     import RiFileChartLine from '~icons/ri/file-chart-line';
-    
+
     interface LeaderboardProps {
         participants: any[];
         currentUserId?: string;
@@ -85,11 +85,11 @@
     }
 
     .toggle-btn {
-        position: fixed;
-        bottom: 1rem;
-        right: 1rem;
-        z-index: 50;
         display: flex;
+        z-index: 50;
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
         align-items: center;
         justify-content: center;
         width: 3rem;
@@ -110,27 +110,27 @@
     }
 
     .popover-overlay {
+        z-index: 100;
         position: fixed;
         top: 0;
         left: 0;
-        z-index: 100;
         width: 100vw;
         height: 100vh;
         background: rgba(0, 0, 0, 0.5);
     }
 
     .popover-content {
+        z-index: 101;
         position: fixed;
         top: 50%;
         left: 50%;
-        z-index: 101;
         max-width: 90vw;
         max-height: 70vh;
         padding: 1rem;
+        overflow-y: auto;
+        transform: translate(-50%, -50%);
         border: 2px solid var(--border-default);
         background: var(--bg-inactive);
-        transform: translate(-50%, -50%);
-        overflow-y: auto;
     }
 
     .popover-header {
