@@ -17,6 +17,7 @@
     import type { PageData } from './$types';
     import Leaderboard from '$lib/components/Leaderboard.svelte';
     import LeaderboardMobile from '$lib/components/LeaderboardMobile.svelte';
+    import CodeEditor from '$lib/components/CodeEditor.svelte';
 
     let { data }: { data: PageData } = $props();
 
@@ -255,7 +256,7 @@
                     </button>
                 </div>
             </div>
-            <textarea bind:value={code} spellcheck="false"></textarea>
+            <CodeEditor bind:value={code} />
         </section>
 
         <section class="pane terminal">
@@ -306,23 +307,6 @@
     .toolbar-actions {
         display: flex;
         gap: 0.5rem;
-    }
-
-    textarea {
-        flex: 1;
-        padding: 20px;
-        border: none;
-        outline: none;
-        background: transparent;
-        color: var(--fg-main);
-        caret-color: var(--accent);
-        font-size: 1rem;
-        font-family: 'Fira Code', monospace;
-        resize: none;
-    }
-
-    textarea::selection {
-        background: var(--selection);
     }
 
     .console-body {
