@@ -15,6 +15,8 @@
     import { goto } from '$app/navigation';
     import { WebContainer } from '@webcontainer/api';
     import type { PageData } from './$types';
+    import Leaderboard from '$lib/components/Leaderboard.svelte';
+    import LeaderboardMobile from '$lib/components/LeaderboardMobile.svelte';
 
     let { data }: { data: PageData } = $props();
 
@@ -25,7 +27,7 @@
     let problemTitle = $state('');
     let matchStartTime = $state<Date | null>(null);
     let participants = $state<any[]>([]);
-    let currentUserStatus = $state('competing');
+    let currentUserStatus = $state('...');
     let channel: any;
     let supabase: any;
 
@@ -49,7 +51,7 @@
         code = match.problems.starter_code || '// Write your solution here\n';
         matchStartTime = match.started_at ? new Date(match.started_at) : new Date();
 
-        // Boot WebContainer (independent of Supabase)
+        // Boot WebContainer
         if (!window.crossOriginIsolated) {
             output = 'Error: Isolation Headers Missing';
         } else {
@@ -62,14 +64,14 @@
                 }
 
                 container = win.__wc as WebContainer;
-                output = 'ENGINE ONLINE - Ready to battle!';
+                output = 'Webcontainer is Ready!';
             } catch (e) {
                 output = 'Boot failed!';
                 if (dev) console.error(e);
             }
         }
 
-        // Setup Supabase realtime for leaderboard updates (separate from WebContainer)
+        // Setup Supabase realtime for leaderboard updates
         const client = await getSupabase();
         if (!client) return;
 
@@ -138,7 +140,7 @@
     }
 
     /**
-     * Submit solution - marks participant as finished and calculates completion time
+     * Marks participant as finished and calculates completion time
      */
     async function submitSolution() {
         if (dev) console.log('Submit clicked, user:', data.user?.id);
@@ -221,25 +223,6 @@
         }
     }
 
-    function formatTime(ms: number | null): string {
-        if (!ms) return 'Competing...';
-        const seconds = Math.floor(ms / 1000);
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-    }
-
-    const sortedParticipants = $derived(
-        [...participants].sort((a, b) => {
-            if (a.status === 'finished' && b.status === 'finished') {
-                return (a.completion_time_ms || 0) - (b.completion_time_ms || 0);
-            }
-            if (a.status === 'finished') return -1;
-            if (b.status === 'finished') return 1;
-            return 0;
-        })
-    );
-
     const allFinished = $derived(
         participants.length > 0 && participants.every((p) => p.status === 'finished')
     );
@@ -254,8 +237,8 @@
     });
 </script>
 
-<div class="arena-layout">
-    <main class="ide">
+<div class="ide">
+    <div class="editor-column">
         <section class="pane editor">
             <div class="toolbar">
                 <span class="filename">{problemTitle || 'solution.js'}</span>
@@ -281,71 +264,43 @@
                 <pre><code>{output}</code></pre>
             </div>
         </section>
-    </main>
-    <aside class="leaderboard">
-        <h3>Leaderboard</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Pos</th>
-                    <th>Participant</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                {#each sortedParticipants as participant, index}
-                    <tr class={participant.user_id === data.user.id ? 'current-user' : ''}>
-                        <td>{index + 1}</td>
-                        <td>{participant.username || 'Unknown'}</td>
-                        <td>{formatTime(participant.completion_time_ms)}</td>
-                    </tr>
-                {/each}
-            </tbody>
-        </table>
-    </aside>
+    </div>
+    <Leaderboard participants={participants} currentUserId={data.user.id} />
 </div>
 
+<LeaderboardMobile participants={participants} currentUserId={data.user.id} />
+
 <style>
-    .arena-layout {
+    .ide {
         display: flex;
-        height: 100vh;
-        padding: 1rem;
+        height: calc(100vh - 8rem);
+        padding: 0 1rem 1rem 1rem;
         gap: 1rem;
     }
 
-    .leaderboard {
-        width: 250px;
-        padding: 1rem;
-        overflow-y: auto;
-        border-radius: 8px;
-        background: var(--bg-inactive);
+    .editor-column {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        gap: 1rem;
     }
 
-    .leaderboard h3 {
-        margin: 0 0 1rem 0;
-        color: var(--accent);
+    .pane {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        background: var(--bg-main);
     }
 
-    .leaderboard table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .leaderboard th {
-        padding: 0.5rem;
+    .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 16px;
         border-bottom: 1px solid var(--border-dim);
+        background: var(--bg-inactive);
         color: var(--comment);
         font-size: 0.8rem;
-        text-align: left;
-    }
-
-    .leaderboard td {
-        padding: 0.5rem;
-        border-bottom: 1px solid var(--border-dim);
-    }
-
-    .leaderboard tr.current-user {
-        background: rgba(180, 212, 207, 0.1);
     }
 
     .toolbar-actions {
@@ -353,41 +308,8 @@
         gap: 0.5rem;
     }
 
-    .submit-btn {
-        background: var(--success);
-        color: white;
-    }
-
-    .submit-btn:disabled {
-        cursor: not-allowed;
-        opacity: 0.5;
-    }
-
-    .ide {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+    textarea {
         flex: 1;
-        gap: 2px;
-    }
-
-    .pane {
-        display: grid;
-        grid-template-rows: auto 1fr;
-        background: var(--bg-main);
-    }
-
-    .toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 8px 16px;
-        border-bottom: 1px solid var(--border-dim);
-        background: var(--bg-inactive);
-        color: var(--comment);
-        font-size: 0.8rem;
-    }
-
-    textarea {
         padding: 20px;
         border: none;
         outline: none;
@@ -404,64 +326,10 @@
     }
 
     .console-body {
+        flex: 1;
         padding: 20px;
         overflow-y: auto;
         background: var(--bg-main);
-    }
-
-    code {
-        color: var(--accent);
-        font-family: 'Fira Code', monospace;
-        white-space: pre-wrap;
-    }
-    .ide {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        height: 100%;
-        gap: 2px;
-        background: var(--bg-main);
-    }
-
-    .pane {
-        display: grid;
-        grid-template-rows: auto 1fr;
-        background: var(--bg-main);
-    }
-
-    .toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 8px 16px;
-        border-bottom: 1px solid var(--border-dim);
-        background: var(--bg-inactive);
-        color: var(--comment);
-        font-size: 0.8rem;
-        font-family: system-ui, sans-serif;
-    }
-
-    textarea {
-        padding: 20px;
-        border: none;
-        outline: none;
-        background: transparent;
-        color: var(--fg-main);
-        caret-color: var(--accent);
-        font-size: 1rem;
-        font-family: 'Fira Code', monospace;
-        resize: none;
-    }
-
-    /* Style the selection color to match your palette */
-    textarea::selection {
-        background: var(--selection);
-    }
-
-    .console-body {
-        padding: 20px;
-        overflow-y: auto;
-        background: var(--bg-main);
-        scrollbar-gutter: stable;
     }
 
     code {
@@ -473,7 +341,6 @@
     button {
         padding: 4px 12px;
         border: none;
-        border-radius: var(--radius-sm);
         background: var(--accent);
         color: var(--bg-main);
         font-weight: bold;
@@ -489,5 +356,15 @@
             color: var(--comment);
             cursor: not-allowed;
         }
+    }
+
+    .submit-btn {
+        background: var(--success);
+        color: white;
+    }
+
+    .submit-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
     }
 </style>
