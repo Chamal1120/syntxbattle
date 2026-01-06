@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export const load: PageServerLoad = async ({ locals, params, url }) => {
     const { user } = await locals.safeGetSession();
 
     if (!user) {
@@ -20,6 +20,21 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     if (matchError) {
         console.error('Error fetching match:', matchError.message);
         throw redirect(303, '/battle');
+    }
+
+    // Get language preference from URL or default to javascript
+    const language = url.searchParams.get('lang') || 'javascript';
+
+    // Fetch language-specific starter code
+    const { data: problemLang, error: langError } = await supabase
+        .from('problem_languages')
+        .select('*')
+        .eq('problem_id', match.problem_id)
+        .eq('language', language)
+        .single();
+
+    if (langError) {
+        console.error('Error fetching problem language config:', langError.message);
     }
 
     // Fetch participants with status
@@ -51,5 +66,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
         user,
         match,
         initialParticipants: participants,
+        language,
+        problemLanguage: problemLang,
     };
 };
