@@ -70,14 +70,6 @@
         { tag: tags.escape, color: '#d8647e' },
     ]);
 
-    $effect(() => {
-        if (view) {
-            view.dispatch({
-                effects: vimCompartment.reconfigure(vimMode ? vim() : []),
-            });
-        }
-    });
-
     onMount(() => {
         view = new EditorView({
             doc: value,
@@ -190,6 +182,14 @@
                     to: view.state.doc.length,
                     insert: value,
                 },
+            });
+        }
+    });
+
+    $effect(() => {
+        if (view) {
+            view.dispatch({
+                effects: vimCompartment.reconfigure(vimMode ? vim() : []),
             });
         }
     });
