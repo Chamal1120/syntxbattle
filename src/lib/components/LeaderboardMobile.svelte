@@ -51,7 +51,8 @@
     </button>
 
     {#if showPopover}
-        <div class="popover-overlay" onclick={closePopover}></div>
+        <button class="popover-overlay" onclick={closePopover} aria-label="Close leaderboard"
+        ></button>
         <div class="popover-content">
             <div class="popover-header">
                 <h3>Leaderboard</h3>
@@ -116,7 +117,10 @@
         left: 0;
         width: 100vw;
         height: 100vh;
+        padding: 0;
+        border: none;
         background: rgba(0, 0, 0, 0.5);
+        cursor: pointer;
     }
 
     .popover-content {

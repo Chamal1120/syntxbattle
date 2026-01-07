@@ -6,6 +6,7 @@
      * * @author: Chamal Mallawaarachchi
      */
     import { page } from '$app/state';
+    import { navigating } from '$app/stores';
     //import { browser } from "$app/environment";
     import favicon from '$lib/assets/favicon.svg';
     import Navbar from '$lib/components/Navbar.svelte';
@@ -40,6 +41,14 @@
 {#if page.url.pathname !== '/'}
     <Navbar user={data.user} />
 {/if}
+
+<div class="page-loader" class:active={$navigating}>
+    <div class="lds-facebook">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
 
 <main class="body-content">
     {@render children()}

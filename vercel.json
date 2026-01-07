@@ -1,17 +1,22 @@
 {
-  "headers": [
-    {
-      "source": "/arena/:path*",
-      "headers": [
+    "headers": [
         {
-          "key": "Cross-Origin-Embedder-Policy",
-          "value": "require-corp"
-        },
-        {
-          "key": "Cross-Origin-Opener-Policy",
-          "value": "same-origin"
+            "source": "/arena/:path*",
+            "headers": [
+                {
+                    "key": "Cross-Origin-Embedder-Policy",
+                    "value": "require-corp"
+                },
+                {
+                    "key": "Cross-Origin-Opener-Policy",
+                    "value": "same-origin"
+                }
+            ]
         }
-      ]
-    }
-  ]
+    ],
+    "github": {
+        "silent": true,
+        "autoJobCancelation": true
+    },
+    "buildCommand": "pnpm test && pnpm build"
 }
