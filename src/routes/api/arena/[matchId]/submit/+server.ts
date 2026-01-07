@@ -102,7 +102,7 @@ export const POST: RequestHandler = async ({ request, params, locals }) => {
                     .eq('user_id', userId);
 
                 console.log('Update error:', updateError);
-            } 
+            }
         }
 
         return json({

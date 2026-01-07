@@ -32,7 +32,7 @@
     let problemDifficulty = $state('');
     let matchStartTime = $state<Date | null>(null);
     let participants = $state<any[]>([]);
-    let currentUserStatus = $state('...');
+    let currentUserStatus = $state('competing');
     let currentLanguage = $state('javascript');
     let showFailedTestsPopover = $state(false);
     let failedTestsMessage = $state('');
@@ -40,7 +40,6 @@
     let supabase: any;
     let vimMode = $state(false);
 
-    // Load vim preference from localStorage
     if (browser) {
         const saved = localStorage.getItem('syntxbattle-vim-mode');
         vimMode = saved === 'true';
@@ -64,10 +63,11 @@
         return supabase;
     }
 
-    // Handle navigation away from arena (back button, etc.)
     beforeNavigate(async (navigation) => {
-        if (currentUserStatus !== 'finished' && currentUserStatus !== 'left') {
-            // Update status to left
+        const isSamePage = navigation.to?.route?.id === navigation.from?.route?.id;
+        const isRefresh = !navigation.to || isSamePage;
+
+        if (currentUserStatus !== 'finished' && currentUserStatus !== 'left' && !isRefresh) {
             const client = await getSupabase();
             if (client) {
                 await client
@@ -76,8 +76,7 @@
                     .eq('match_id', data.matchId)
                     .eq('user_id', data.user.id);
             }
-            
-            // If navigating out redirect to /battle
+
             if (navigation.to?.route?.id !== '/battle') {
                 navigation.cancel();
                 goto('/battle');
@@ -95,26 +94,66 @@
             problemDescription = match.problems.description;
             problemDifficulty = match.problems.difficulty;
             currentLanguage = data.language || 'javascript';
-            
-            // Load starter code from problem_languages
+
             code = data.problemLanguage?.starter_code || '// Write your solution here\n';
-            
+
             matchStartTime = match.started_at ? new Date(match.started_at) : new Date();
 
-            // Set current user status from initial data
             const currentParticipant = participants.find((p) => p.user_id === data.user.id);
             if (currentParticipant) {
                 currentUserStatus = currentParticipant.status || 'competing';
+
+                if (currentUserStatus === 'left' && currentParticipant.status !== 'finished') {
+                    currentUserStatus = 'competing';
+                    const client = await getSupabase();
+                    if (client) {
+                        await client
+                            .from('match_participants')
+                            .update({ status: 'competing' })
+                            .eq('match_id', data.matchId)
+                            .eq('user_id', data.user.id);
+
+                        const index = participants.findIndex((p) => p.user_id === data.user.id);
+                        if (index !== -1) {
+                            participants[index] = {
+                                ...participants[index],
+                                status: 'competing',
+                            };
+                            participants = [...participants];
+                        }
+                    }
+                }
             }
 
-            // Boot WebContainer
             if (!window.crossOriginIsolated) {
-                output = 'Error: Isolation Headers Missing';
+                output = 'Error: Isolation Headers Missing. Please refresh the page.';
+                if (dev) console.error('crossOriginIsolated is false - headers not applied');
             } else {
                 try {
                     const win = window as any;
 
                     if (!win.__wc) {
+                        output = 'Booting WebContainer...';
+                        if (document.hidden) {
+                            output = 'Waiting for tab to be active...';
+                            await new Promise((resolve) => {
+                                const checkActive = () => {
+                                    if (!document.hidden) {
+                                        document.removeEventListener(
+                                            'visibilitychange',
+                                            checkActive
+                                        );
+                                        resolve(undefined);
+                                    }
+                                };
+                                document.addEventListener('visibilitychange', checkActive);
+                                // Timeout after 5 seconds
+                                setTimeout(() => {
+                                    document.removeEventListener('visibilitychange', checkActive);
+                                    resolve(undefined);
+                                }, 5000);
+                            });
+                        }
                         output = 'Booting WebContainer...';
                         win.__wc = await WebContainer.boot();
                     }
@@ -122,8 +161,8 @@
                     container = win.__wc as WebContainer;
                     output = 'Webcontainer is Ready!';
                 } catch (e) {
-                    output = 'Boot failed!';
-                    if (dev) console.error(e);
+                    output = 'Boot failed! Please refresh the page.';
+                    if (dev) console.error('WebContainer boot error:', e);
                 }
             }
 
@@ -148,7 +187,9 @@
                     },
                     (payload: any) => {
                         if (dev) console.log('Participant updated:', payload);
-                        const index = participants.findIndex((p) => p.user_id === payload.new.user_id);
+                        const index = participants.findIndex(
+                            (p) => p.user_id === payload.new.user_id
+                        );
                         if (index !== -1) {
                             participants[index] = payload.new;
                             participants = [...participants];
@@ -183,6 +224,8 @@
         })();
 
         // Handle browser back/navigation away
+        // Note: beforeunload fires on both refresh and close, so we mark as 'left'
+        // If user refreshes, onMount will reset status back to 'competing'
         const handleBeforeUnload = () => {
             if (currentUserStatus !== 'finished' && currentUserStatus !== 'left') {
                 leaveArena(true);
@@ -252,7 +295,7 @@
      */
     async function submitSolution() {
         console.log('Submitting solution...');
-        
+
         const client = await getSupabase();
         if (!client) return;
         if (!matchStartTime) {
@@ -316,7 +359,7 @@
             console.log('Completion data:', {
                 status: result.status,
                 finished_at: result.finished_at,
-                completion_time_ms: result.completion_time_ms
+                completion_time_ms: result.completion_time_ms,
             });
 
             if (result.success) {
@@ -329,7 +372,7 @@
                 // Update local participant state
                 const index = participants.findIndex((p) => p.user_id === data.user.id);
                 console.log('Found participant at index:', index);
-                
+
                 if (index !== -1) {
                     participants[index] = {
                         ...participants[index],
@@ -361,7 +404,7 @@
                 output += 'Some tests failed.\n';
                 failedTestsMessage = `${result.total - result.passed} out of ${result.total} tests failed.`;
                 showFailedTestsPopover = true;
-                
+
                 // Auto-hide popover after 4 seconds
                 setTimeout(() => {
                     showFailedTestsPopover = false;
@@ -379,8 +422,13 @@
      * Marks participant as left the arena
      */
     async function leaveArena(isUnload = false) {
-        console.log('leaveArena called, isUnload:', isUnload, 'currentUserStatus:', currentUserStatus);
-        
+        console.log(
+            'leaveArena called, isUnload:',
+            isUnload,
+            'currentUserStatus:',
+            currentUserStatus
+        );
+
         const client = await getSupabase();
         if (!client) {
             console.error('No Supabase client');
@@ -402,7 +450,7 @@
                 .catch((err: unknown) => {
                     if (dev) console.error('Leave arena error:', err);
                 });
-            
+
             currentUserStatus = 'left';
             return;
         }
@@ -484,13 +532,19 @@
                     <button
                         class="submit-btn"
                         onclick={submitSolution}
-                        disabled={currentUserStatus === 'finished' || currentUserStatus === 'left' || isSubmitting}
+                        disabled={currentUserStatus === 'finished' ||
+                            currentUserStatus === 'left' ||
+                            isSubmitting}
                     >
-                        {isSubmitting ? 'Testing...' : currentUserStatus === 'finished' ? 'Submitted' : 'Submit Solution'}
+                        {isSubmitting
+                            ? 'Testing...'
+                            : currentUserStatus === 'finished'
+                              ? 'Submitted'
+                              : 'Submit Solution'}
                     </button>
                     {#if showFailedTestsPopover}
                         <div class="test-failed-popover">
-                           {failedTestsMessage}
+                            {failedTestsMessage}
                         </div>
                     {/if}
                     <button
@@ -512,7 +566,7 @@
             </div>
         </section>
     </div>
-    
+
     <div class="right-column">
         <section class="pane problem-description">
             <div class="toolbar">
@@ -579,20 +633,20 @@
 
     .problem-body h2 {
         margin: 0 0 16px 0;
-        font-size: 1.2rem;
         color: var(--accent);
+        font-size: 1.2rem;
     }
 
     .description-content {
-        white-space: pre-wrap;
         color: var(--fg-main, #e4e4e7);
+        white-space: pre-wrap;
     }
 
     .difficulty-badge {
         padding: 2px 8px;
         border-radius: 4px;
-        font-size: 0.75rem;
         font-weight: bold;
+        font-size: 0.75rem;
         text-transform: uppercase;
     }
 
@@ -681,29 +735,29 @@
     }
 
     .test-failed-popover {
+        z-index: 1000;
         position: absolute;
         top: 100%;
         right: 0;
         margin-top: 8px;
         padding: 12px 16px;
-        background: var(--error, #e74c3c);
-        color: white;
         border-radius: 4px;
-        font-size: 0.9rem;
+        background: var(--error, #e74c3c);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        animation: slideDown 0.3s ease-out;
-        z-index: 1000;
+        color: white;
+        font-size: 0.9rem;
         white-space: nowrap;
+        animation: slideDown 0.3s ease-out;
     }
 
     @keyframes slideDown {
         from {
-            opacity: 0;
             transform: translateY(-10px);
+            opacity: 0;
         }
         to {
-            opacity: 1;
             transform: translateY(0);
+            opacity: 1;
         }
     }
 
