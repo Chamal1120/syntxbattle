@@ -53,7 +53,7 @@ describe('Participant filtering', () => {
     const participants: Array<{
         user_id: string;
         status: string;
-        completion_time_ms: Number | null;
+        completion_time_ms: number | null;
         finished_at?: string;
     }> = [
         { user_id: '1', status: 'finished', completion_time_ms: 45000 },
