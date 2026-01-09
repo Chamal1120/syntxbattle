@@ -22,7 +22,7 @@
         "db:studio": "drizzle-kit studio",
         "db:cli": "supabase",
         "test:unit": "vitest",
-        "test": "npm run test:unit -- --run"
+        "test": "vitest --run"
     },
     "devDependencies": {
         "@iconify-json/ri": "^1.2.7",
