@@ -159,7 +159,7 @@
                         win.__wc = await WebContainer.boot();
                     }
 
-                    container = win.__wc; 
+                    container = win.__wc;
                     output = 'Webcontainer is Ready!';
                 } catch (e) {
                     output = 'Boot failed! Please refresh the page.';
