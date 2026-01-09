@@ -6,17 +6,26 @@
      * * @author: Chamal Mallawaarachchi
      */
     import { page } from '$app/state';
-    import { navigating } from '$app/stores';
     //import { browser } from "$app/environment";
     import favicon from '$lib/assets/favicon.svg';
     import Navbar from '$lib/components/Navbar.svelte';
     import CustomCursor from '$lib/components/CustomCursor.svelte';
-    import { onNavigate } from '$app/navigation';
+    import { onNavigate, beforeNavigate } from '$app/navigation';
+    import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+
     import './app.css';
 
+    injectSpeedInsights();
+
     let { children, data } = $props();
+    let isNavigating = $state(false);
+
+    beforeNavigate(() => {
+        isNavigating = true;
+    })
 
     onNavigate((navigation) => {
+        isNavigating = false;
         // Check the browser support for the View Transition API
         if (!document.startViewTransition) return;
 
@@ -42,7 +51,7 @@
     <Navbar user={data.user} />
 {/if}
 
-<div class="page-loader" class:active={$navigating}>
+<div class="page-loader" class:active={isNavigating}>
     <div class="lds-facebook">
         <div></div>
         <div></div>
