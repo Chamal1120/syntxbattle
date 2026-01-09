@@ -50,7 +50,12 @@ describe('Time calculations', () => {
 });
 
 describe('Participant filtering', () => {
-    const participants = [
+    const participants: Array<{
+        user_id: string;
+        status: string;
+        completion_time_ms: Number | null;
+        finished_at?: string;
+    }> = [
         { user_id: '1', status: 'finished', completion_time_ms: 45000 },
         { user_id: '2', status: 'competing', completion_time_ms: null },
         { user_id: '3', status: 'left', completion_time_ms: null },
@@ -120,7 +125,12 @@ describe('Participant sorting', () => {
 
 describe('Participant state updates', () => {
     it('updates participant to finished status', () => {
-        const participants = [
+        const participants: Array<{
+            user_id: string;
+            status: string;
+            completion_time_ms: Number | null;
+            finished_at?: string;
+        }> = [
             { user_id: '1', status: 'competing', completion_time_ms: null },
             { user_id: '2', status: 'competing', completion_time_ms: null },
         ];

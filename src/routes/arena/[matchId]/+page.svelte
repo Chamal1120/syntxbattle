@@ -14,7 +14,7 @@
     import { dev, browser } from '$app/environment';
     import { goto } from '$app/navigation';
     import { beforeNavigate } from '$app/navigation';
-    import { WebContainer } from '@webcontainer/api';
+    //import { WebContainer } from '@webcontainer/api';
     import type { PageData } from './$types';
     import Leaderboard from '$lib/components/Leaderboard.svelte';
     import LeaderboardMobile from '$lib/components/LeaderboardMobile.svelte';
@@ -22,7 +22,7 @@
 
     let { data }: { data: PageData } = $props();
 
-    let container = $state<WebContainer | null>(null);
+    let container = $state<import('@webcontainer/api').WebContainer | null>(null);
     let code = $state('');
     let output = $state('Initializing battle arena...');
     let isRunning = $state(false);
@@ -155,10 +155,11 @@
                             });
                         }
                         output = 'Booting WebContainer...';
+                        const { WebContainer } = await import('@webcontainer/api');
                         win.__wc = await WebContainer.boot();
                     }
 
-                    container = win.__wc as WebContainer;
+                    container = win.__wc; 
                     output = 'Webcontainer is Ready!';
                 } catch (e) {
                     output = 'Boot failed! Please refresh the page.';

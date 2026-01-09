@@ -44,4 +44,7 @@ jobs:
               run: pnpm test
 
             - name: Check types
+            - env:
+                  PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
+                  PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key"
               run: pnpm check
