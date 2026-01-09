@@ -128,7 +128,7 @@ describe('Participant state updates', () => {
         const participants: Array<{
             user_id: string;
             status: string;
-            completion_time_ms: Number | null;
+            completion_time_ms: number | null;
             finished_at?: string;
         }> = [
             { user_id: '1', status: 'competing', completion_time_ms: null },
