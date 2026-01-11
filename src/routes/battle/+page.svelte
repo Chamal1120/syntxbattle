@@ -314,8 +314,16 @@
             display: none;
         }
 
+        .info-btn {
+            display: none;
+        }
+
         .select-btn-text {
             display: none;
+        }
+
+        .select-btn {
+            justify-content: center;
         }
     }
 </style>

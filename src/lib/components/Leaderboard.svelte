@@ -60,10 +60,9 @@
 
 <style>
     .leaderboard {
-        width: 250px;
         padding: 1rem;
         overflow-y: auto;
-        border-radius: 8px;
+        border-radius: 0;
         background: var(--bg-inactive);
     }
 

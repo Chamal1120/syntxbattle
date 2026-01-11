@@ -6,23 +6,33 @@
      * * @author: Chamal Mallawaarachchi
      */
     import { page } from '$app/state';
-    //import { browser } from "$app/environment";
+    import { browser } from '$app/environment';
     import favicon from '$lib/assets/favicon.svg';
     import Navbar from '$lib/components/Navbar.svelte';
     import CustomCursor from '$lib/components/CustomCursor.svelte';
     import { onNavigate, beforeNavigate } from '$app/navigation';
     import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+    import Footer from '$lib/components/Footer.svelte';
 
     import './app.css';
 
-    injectSpeedInsights();
-
     let { children, data } = $props();
     let isNavigating = $state(false);
+    let isDesktop = $state(true);
+
+    injectSpeedInsights();
+
+    $effect(() => {
+        if (browser) {
+            isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+                navigator.userAgent
+            );
+        }
+    });
 
     beforeNavigate(() => {
         isNavigating = true;
-    })
+    });
 
     onNavigate((navigation) => {
         isNavigating = false;
@@ -45,10 +55,8 @@
     <link rel="icon" href={favicon} />
 </svelte:head>
 
-<CustomCursor />
-
-{#if page.url.pathname !== '/'}
-    <Navbar user={data.user} />
+{#if isDesktop}
+    <CustomCursor />
 {/if}
 
 <div class="page-loader" class:active={isNavigating}>
@@ -59,6 +67,26 @@
     </div>
 </div>
 
-<main class="body-content">
-    {@render children()}
-</main>
+<div class="page">
+    {#if page.url.pathname !== '/'}
+        <Navbar user={data.user} />
+    {/if}
+    <main class="body-content">
+        {@render children()}
+    </main>
+    {#if page.url.pathname !== '/'}
+        <Footer />
+    {/if}
+</div>
+
+<style>
+    .page {
+        display: flex;
+        flex-direction: column;
+        min-height: 100dvh;
+    }
+
+    main {
+        flex: 1;
+    }
+</style>

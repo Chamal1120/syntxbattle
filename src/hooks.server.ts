@@ -58,14 +58,17 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     // Apply WebContainer security headers to arena and battle pages
     // This is required because browsers need consistent COOP/COEP headers across navigation
-    // Exclude root and login pages for better Lighthouse scores and OAuth redirects
-    // Skip for Lighthouse and other tools that need to inject monitoring code
+    // Exclude  followings:
+    //      - root and login pages
+    //      - Skip for Lighthouse and other tools
+    //      - Vercel speed insights
     const needsHeaders =
         event.url.pathname.startsWith('/arena') || event.url.pathname.startsWith('/battle');
     const excludePaths =
         event.url.pathname === '/' ||
         event.url.pathname === '/login' ||
-        event.url.pathname.startsWith('/auth/callback');
+        event.url.pathname.startsWith('/auth/callback') ||
+        event.url.pathname.startsWith('/_vercel');
     const userAgent = event.request.headers.get('user-agent') || '';
     const isLighthouse = userAgent.includes('Chrome-Lighthouse');
 

@@ -59,6 +59,8 @@
     --radius-circle: 50%;
     --view-transition-duration: 0.4s;
 
+    --header-h: 4rem;
+
     /* Smooth fade-in/out for the whole page */
     ::view-transition-old(root),
     ::view-transition-new(root) {

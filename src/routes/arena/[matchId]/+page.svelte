@@ -76,11 +76,6 @@
                     .eq('match_id', data.matchId)
                     .eq('user_id', data.user.id);
             }
-
-            if (navigation.to?.route?.id !== '/battle') {
-                navigation.cancel();
-                goto('/battle');
-            }
         }
     });
 
@@ -541,7 +536,7 @@
                             ? 'Testing...'
                             : currentUserStatus === 'finished'
                               ? 'Submitted'
-                              : 'Submit Solution'}
+                              : 'Submit'}
                     </button>
                     {#if showFailedTestsPopover}
                         <div class="test-failed-popover">
@@ -553,7 +548,7 @@
                         onclick={() => leaveArena()}
                         disabled={currentUserStatus === 'finished' || currentUserStatus === 'left'}
                     >
-                        {currentUserStatus === 'left' ? 'Left Arena' : 'Leave Arena'}
+                        {currentUserStatus === 'left' ? 'Left' : 'Leave'}
                     </button>
                 </div>
             </div>
@@ -590,9 +585,16 @@
 <LeaderboardMobile {participants} currentUserId={data.user.id} />
 
 <style>
+    :global(main.body-content) {
+        max-inline-size: none;
+        margin-inline: 0;
+    }
+
     .ide {
         display: flex;
+        max-width: 1400px;
         height: calc(100vh - 8rem);
+        margin: 0 auto;
         padding: 0 1rem 1rem 1rem;
         gap: 1rem;
     }
@@ -645,25 +647,25 @@
 
     .difficulty-badge {
         padding: 2px 8px;
-        border-radius: 4px;
+        border-radius: 0;
         font-weight: bold;
         font-size: 0.75rem;
         text-transform: uppercase;
     }
 
     .difficulty-easy {
-        background: #10b981;
-        color: white;
+        background: var(--accent-bright-alpha-10);
+        color: var(--accent-bright);
     }
 
     .difficulty-medium {
-        background: #f59e0b;
-        color: white;
+        background: color-mix(in srgb, var(--warning) 15%, transparent);
+        color: var(--warning);
     }
 
     .difficulty-hard {
-        background: #ef4444;
-        color: white;
+        background: color-mix(in srgb, var(--error) 15%, transparent);
+        color: var(--error);
     }
 
     .toolbar {
@@ -671,6 +673,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 8px 16px;
+        gap: 1rem;
         border-bottom: 1px solid var(--border-dim);
         background: var(--bg-inactive);
         color: var(--comment);
@@ -680,6 +683,14 @@
     .toolbar-actions {
         display: flex;
         gap: 0.5rem;
+    }
+
+    .filename {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .console-body {

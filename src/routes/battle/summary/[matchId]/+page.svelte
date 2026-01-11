@@ -96,11 +96,18 @@
 </div>
 
 <style>
+    :global(main.body-content) {
+        max-inline-size: none;
+        margin-inline: 0;
+    }
+
     .summary-container {
         display: flex;
         align-items: center;
         justify-content: center;
+        max-width: 1400px;
         min-height: 100vh;
+        margin: 0 auto;
         padding: 1rem;
         background: var(--bg-main);
     }
