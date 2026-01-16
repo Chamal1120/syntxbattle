@@ -16,7 +16,7 @@
 
     <address class="footer-meta">
         <p>© {new Date().getFullYear()} SyntxBattle</p>
-        <a href="mailto:chamal.randika.mcr@gmail.com"> Chamal.randika.mcr@gmail.com </a>
+        <a href="https://github.com/Chamal1120" target="_blank"> Developed by Chamal</a>
     </address>
 </footer>
 

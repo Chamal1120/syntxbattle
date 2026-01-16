@@ -21,6 +21,10 @@
     import CodeEditor from '$lib/components/CodeEditor.svelte';
     import RiQuestionLine from '~icons/ri/question-line';
     import RiFileChartLine from '~icons/ri/file-chart-line';
+    import RiVimeoFill from '~icons/ri/vimeo-fill';
+    import RiArrowRightDoubleFill from '~icons/ri/arrow-right-double-fill';
+    import RiArrowRightUpBoxFill from '~icons/ri/arrow-right-up-box-fill';
+    import RiLogoutBoxFill from '~icons/ri/logout-box-fill';
 
     let { data }: { data: PageData } = $props();
 
@@ -224,7 +228,7 @@
         })();
 
         // Handle browser back/navigation away
-        // Note: beforeunload fires on both refresh and close, so we mark as 'left'
+        // NOTE: beforeunload fires on both refresh and close, so we mark as 'left'
         // If user refreshes, onMount will reset status back to 'competing'
         const handleBeforeUnload = () => {
             if (currentUserStatus !== 'finished' && currentUserStatus !== 'left') {
@@ -435,10 +439,9 @@
             return;
         }
 
-        // For page unload, we can't rely on async operations completing
-        // Just update the status and let it fire
+        // For page unload, can't rely on async operations completing
+        // for now, just update the status and let it fire
         if (isUnload) {
-            // Fire and forget - best effort
             client
                 .from('match_participants')
                 .update({ status: 'left' })
@@ -455,7 +458,7 @@
             return;
         }
 
-        // Normal leave flow
+        // Normal leave
         console.log('Starting normal leave flow');
         const { error } = await client
             .from('match_participants')
@@ -472,7 +475,6 @@
 
         currentUserStatus = 'left';
 
-        // Update local participants state
         const index = participants.findIndex((p) => p.user_id === data.user.id);
         if (index !== -1) {
             participants[index] = {
@@ -523,11 +525,20 @@
             <div class="toolbar">
                 <span class="filename">{problemTitle || 'solution.js'}</span>
                 <div class="toolbar-actions">
-                    <button class="vim-toggle" onclick={toggleVim} class:active={vimMode}>
-                        {vimMode ? 'VIM' : 'NORMAL'}
+                    <button
+                        class="vim-toggle"
+                        onclick={toggleVim}
+                        class:active={vimMode}
+                        aria-label="Toggle VIM mode"
+                    >
+                        <RiVimeoFill />
                     </button>
-                    <button onclick={runCode} disabled={!container || isRunning}>
-                        {isRunning ? 'Running...' : 'Run'}
+                    <button
+                        onclick={runCode}
+                        disabled={!container || isRunning}
+                        aria-label="Run code"
+                    >
+                        <RiArrowRightDoubleFill />
                     </button>
                     <button
                         class="submit-btn"
@@ -535,12 +546,9 @@
                         disabled={currentUserStatus === 'finished' ||
                             currentUserStatus === 'left' ||
                             isSubmitting}
+                        aria-label="Submit solution"
                     >
-                        {isSubmitting
-                            ? 'Testing...'
-                            : currentUserStatus === 'finished'
-                              ? 'Submitted'
-                              : 'Submit'}
+                        <RiArrowRightUpBoxFill />
                     </button>
                     {#if showFailedTestsPopover}
                         <div class="test-failed-popover">
@@ -551,12 +559,15 @@
                         class="leave-btn"
                         onclick={() => leaveArena()}
                         disabled={currentUserStatus === 'finished' || currentUserStatus === 'left'}
+                        aria-label="Leave arena"
                     >
-                        {currentUserStatus === 'left' ? 'Left' : 'Leave'}
+                        <RiLogoutBoxFill />
                     </button>
                 </div>
             </div>
-            <CodeEditor bind:value={code} bind:vimMode />
+            <div class="code-editor-wrapper">
+                <CodeEditor bind:value={code} bind:vimMode />
+            </div>
         </section>
 
         <section class="pane terminal">
@@ -641,6 +652,7 @@
     }
 
     .ide {
+        box-sizing: border-box;
         display: flex;
         width: 100%;
         height: calc(100vh - 8rem);
@@ -652,6 +664,7 @@
         display: flex;
         flex: 1;
         flex-direction: column;
+        min-width: 0;
         gap: 1rem;
     }
 
@@ -667,6 +680,10 @@
         flex: 1;
         flex-direction: column;
         background: var(--bg-main);
+    }
+    .pane.editor {
+        min-width: 0;
+        overflow-x: auto;
     }
 
     .problem-description {
@@ -756,13 +773,16 @@
     }
 
     button {
-        padding: 4px 12px;
-        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        border: 2px solid var(--border-hover);
         background: var(--accent);
         color: var(--bg-main);
         font-weight: bold;
         cursor: pointer;
-        transition: filter 0.2s ease;
+        transition: filter 0.1s;
 
         &:hover {
             filter: brightness(1.1);
@@ -828,17 +848,13 @@
 
     .vim-toggle {
         padding: 4px 8px;
-        border: 1px solid var(--border-dim);
         background: var(--bg-main);
         color: var(--comment);
-        font-size: 0.7rem;
-        font-family: 'Fira Code', monospace;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.2s;
     }
 
     .vim-toggle:hover {
-        border-color: var(--accent);
         color: var(--accent);
     }
 
@@ -848,6 +864,17 @@
         color: var(--bg-main);
     }
 
+    .code-editor-wrapper {
+        flex: 1;
+        min-width: 0;
+        overflow: auto;
+    }
+
+    .pane.terminal {
+        flex: none;
+        height: 200px;
+    }
+
     @media (max-width: 768px) {
         .right-column {
             display: none;
@@ -855,7 +882,7 @@
     }
 
     .problem-popup .popover-overlay {
-        z-index: 2000;
+        z-index: 1000;
         position: fixed;
         top: 0;
         left: 0;
@@ -868,8 +895,8 @@
     }
 
     .problem-popup .popover-content {
-        display: flex; /* Allow pane to be flex child */
-        z-index: 2001;
+        display: flex;
+        z-index: 1001;
         position: fixed;
         top: 50%;
         left: 50%;
@@ -884,7 +911,7 @@
     }
 
     .mobile-action-buttons {
-        display: none; /* Hidden by default */
+        display: none;
     }
 
     @media (max-width: 768px) {
