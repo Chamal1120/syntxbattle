@@ -7,15 +7,16 @@
      *
      * @author Chamal Mallawaarachchi
      */
-    import RiFileChartLine from '~icons/ri/file-chart-line';
+    import { createEventDispatcher } from 'svelte';
 
     interface LeaderboardProps {
         participants: any[];
         currentUserId?: string;
+        show: boolean;
     }
 
-    let { participants, currentUserId }: LeaderboardProps = $props();
-    let showPopover = $state(false);
+    let { participants, currentUserId, show }: LeaderboardProps = $props();
+    const dispatch = createEventDispatcher();
 
     function formatTime(ms: number | null): string {
         if (!ms) return 'Competing...';
@@ -36,21 +37,13 @@
         })
     );
 
-    function togglePopover() {
-        showPopover = !showPopover;
-    }
-
     function closePopover() {
-        showPopover = false;
+        dispatch('close');
     }
 </script>
 
 <div class="mobile-leaderboard">
-    <button class="toggle-btn" onclick={togglePopover}>
-        <RiFileChartLine />
-    </button>
-
-    {#if showPopover}
+    {#if show}
         <button class="popover-overlay" onclick={closePopover} aria-label="Close leaderboard"
         ></button>
         <div class="popover-content">
@@ -81,37 +74,8 @@
 </div>
 
 <style>
-    .mobile-leaderboard {
-        display: none;
-    }
-
-    .toggle-btn {
-        display: flex;
-        z-index: 50;
-        position: fixed;
-        right: 1rem;
-        bottom: 1rem;
-        align-items: center;
-        justify-content: center;
-        width: 3rem;
-        height: 3rem;
-        padding: 0;
-        border: 2px solid var(--accent);
-        border-radius: 50%;
-        background: var(--bg-main);
-        color: var(--accent);
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .toggle-btn:hover {
-        background: var(--accent);
-        color: var(--bg-main);
-    }
-
     .popover-overlay {
-        z-index: 100;
+        z-index: 2000;
         position: fixed;
         top: 0;
         left: 0;
@@ -124,7 +88,7 @@
     }
 
     .popover-content {
-        z-index: 101;
+        z-index: 2001;
         position: fixed;
         top: 50%;
         left: 50%;
@@ -184,11 +148,5 @@
 
     tr.current-user {
         background: rgba(180, 212, 207, 0.1);
-    }
-
-    @media (max-width: 768px) {
-        .mobile-leaderboard {
-            display: block;
-        }
     }
 </style>

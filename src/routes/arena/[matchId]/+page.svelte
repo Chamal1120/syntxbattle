@@ -19,6 +19,8 @@
     import Leaderboard from '$lib/components/Leaderboard.svelte';
     import LeaderboardMobile from '$lib/components/LeaderboardMobile.svelte';
     import CodeEditor from '$lib/components/CodeEditor.svelte';
+    import RiQuestionLine from '~icons/ri/question-line';
+    import RiFileChartLine from '~icons/ri/file-chart-line';
 
     let { data }: { data: PageData } = $props();
 
@@ -39,6 +41,8 @@
     let channel: any;
     let supabase: any;
     let vimMode = $state(false);
+    let showProblemPopup = $state(false);
+    let showLeaderboardPopup = $state(false);
 
     if (browser) {
         const saved = localStorage.getItem('syntxbattle-vim-mode');
@@ -582,19 +586,64 @@
     </div>
 </div>
 
-<LeaderboardMobile {participants} currentUserId={data.user.id} />
+{#if showProblemPopup}
+    <div class="problem-popup">
+        <button
+            class="popover-overlay"
+            onclick={() => (showProblemPopup = false)}
+            aria-label="Close problem description"
+        ></button>
+        <div class="popover-content">
+            <section class="pane problem-description">
+                <div class="toolbar">
+                    <div>
+                        <span>Problem</span>
+                        <span
+                            class="difficulty-badge difficulty-{problemDifficulty?.toLowerCase()}"
+                        >
+                            {problemDifficulty}
+                        </span>
+                    </div>
+                    <button class="close-btn" onclick={() => (showProblemPopup = false)}>✕</button>
+                </div>
+                <div class="problem-body">
+                    <h2>{problemTitle}</h2>
+                    <div class="description-content">
+                        {problemDescription}
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{/if}
+
+<div class="mobile-action-buttons">
+    <button class="mobile-action-btn" onclick={() => (showProblemPopup = true)}>
+        <RiQuestionLine />
+    </button>
+    <button class="mobile-action-btn" onclick={() => (showLeaderboardPopup = true)}>
+        <RiFileChartLine />
+    </button>
+</div>
+
+<LeaderboardMobile
+    {participants}
+    currentUserId={data.user.id}
+    show={showLeaderboardPopup}
+    on:close={() => (showLeaderboardPopup = false)}
+/>
 
 <style>
     :global(main.body-content) {
-        max-inline-size: none;
-        margin-inline: 0;
+        align-self: center;
+        width: 100%;
+        max-inline-size: 1400px;
     }
 
     .ide {
         display: flex;
-        max-width: 1400px;
+        width: 100%;
         height: calc(100vh - 8rem);
-        margin: 0 auto;
         padding: 0 1rem 1rem 1rem;
         gap: 1rem;
     }
@@ -797,5 +846,91 @@
         border-color: var(--accent);
         background: var(--accent);
         color: var(--bg-main);
+    }
+
+    @media (max-width: 768px) {
+        .right-column {
+            display: none;
+        }
+    }
+
+    .problem-popup .popover-overlay {
+        z-index: 2000;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        padding: 0;
+        border: none;
+        background: rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+    }
+
+    .problem-popup .popover-content {
+        display: flex; /* Allow pane to be flex child */
+        z-index: 2001;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 90vw;
+        max-height: 70vh;
+        transform: translate(-50%, -50%);
+    }
+
+    .problem-popup .popover-content .pane {
+        width: 100%;
+        border: 2px solid var(--border-default);
+    }
+
+    .mobile-action-buttons {
+        display: none; /* Hidden by default */
+    }
+
+    @media (max-width: 768px) {
+        .mobile-action-buttons {
+            display: flex;
+            z-index: 50;
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            gap: 0.5rem;
+        }
+    }
+
+    .mobile-action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        height: 3rem;
+        padding: 0;
+        border: 2px solid var(--accent);
+        border-radius: 50%;
+        background: var(--bg-main);
+        color: var(--accent);
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .mobile-action-btn:hover {
+        background: var(--accent);
+        color: var(--bg-main);
+    }
+
+    .close-btn {
+        padding: 0.25rem 0.5rem;
+        border: none;
+        background: transparent;
+        color: var(--comment);
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+
+    .close-btn:hover {
+        color: var(--accent);
     }
 </style>

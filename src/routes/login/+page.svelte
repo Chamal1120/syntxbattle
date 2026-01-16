@@ -86,7 +86,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vdh;
+        height: 100dvh;
+        margin: auto;
         gap: var(--space-lg);
     }
 

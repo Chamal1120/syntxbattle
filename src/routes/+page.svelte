@@ -246,10 +246,10 @@
     .centered-container {
         display: flex;
         position: relative;
+        flex: 1;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100dvh;
         padding: 0 2rem;
         gap: clamp(0.5rem, 2vh, 2rem);
         text-align: center;
@@ -296,26 +296,6 @@
         will-change: transform, opacity;
     }
 
-    /* Override inline styles until JS kicks in - for getting a better LCP :) */
-    .hero-title:not(.animating),
-    .hero-tagline:not(.animating),
-    .hero-button:not(.animating) {
-        visibility: visible !important;
-        opacity: 0.001 !important;
-    }
-
-    .hero-title:not(.animating) {
-        transform: rotate(-3deg) !important;
-    }
-
-    .hero-tagline:not(.animating) {
-        transform: translateX(0) !important;
-    }
-
-    .hero-button:not(.animating) {
-        transform: translateY(0) rotate(0deg) !important;
-    }
-
     .tagline {
         max-width: 90%;
         margin: 0;
@@ -354,7 +334,7 @@
         overflow: visible;
         transform: rotate(-3deg);
         color: var(--string);
-        font-size: clamp(3rem, 12vw, 12rem);
+        font-size: clamp(3rem, 12vw, 8rem);
         line-height: 1;
         white-space: nowrap;
         word-break: keep-all;

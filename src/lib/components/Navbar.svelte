@@ -59,9 +59,10 @@
         position: sticky;
         top: 0;
         align-items: center;
+        border-bottom: 2px solid oklch(80% 0.02 250);
+        margin: 1rem;
         justify-content: space-between;
-        margin-bottom: 1rem;
-        padding: 1rem 1rem;
+        padding: 1rem 0rem;
         background-color: var(--bg-main);
     }
 
