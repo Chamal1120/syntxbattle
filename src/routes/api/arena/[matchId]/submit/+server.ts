@@ -3,12 +3,16 @@
  *
  * @author Chamal Mallwaarachchi
  */
-import { json } from '@sveltejs/kit';
+import { json, type Config } from '@sveltejs/kit';
 import { spawn } from 'child_process';
 import { writeFile, unlink, mkdir } from 'fs/promises';
 import { randomUUID } from 'crypto';
 import { existsSync } from 'fs';
 import type { RequestHandler } from './$types';
+
+export const config: Config = {
+    runtime: 'nodejs22.x',
+};
 
 interface SubmissionRequest {
     code: string;
