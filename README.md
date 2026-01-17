@@ -1,11 +1,30 @@
-# SyntXBattle
+<div align="center">
+    <img src="assets/syntxbattle-logo.png"/>
 
-### Environment Variables
+**A multiplayer game like coding battle experience**
+</div>
 
-env-vars
+## Features
 
-```
-DATABASE_URL="postgres://user:password@host:port/db-name"
-PUBLIC_SUPABASE_URL="https://<your-id>supabase.co"
-PUBLIC_SUPABASE_ANON_KEY="<your-public-supabase-anon-key>"
-```
+-   Real-time coding battles (1v1)
+-   IDE and code execution runs client side to offer blazing fast experience to each player (Solution submission runs on server side to maintain security)
+-   VIM mode inside the IDE pane
+-   Supports Typescript/Javascript (other langs support WIP)
+-   Automatically generated unique avatar Images
+-   Authentication with GitHub and Google
+
+## Contributing
+
+Please see the [Contributing Guide](./CONTRIBUTING.md) for more information on how to get involved.
+
+## Made possible with
+-   [SvelteKit](https://svelte.dev) - web dev framework for the rest of us.
+-   [WebContainer API by Stackblitz](https://webcontainers.io/) - Powering the client side lightweight node engine
+- [codemirror](https://codemirror.net) - For powering the code editor
+- [codemirror-vim](https://github.com/replit/codemirror-vim) - VIM mode for codemirror v6
+-   [Supabase Realtime](https://supabase.com/realtime) - For smooth player synchronization
+-   [Dicebear](https://github.com/dicebear/dicebear) - For beautiful avatars
+
+## License
+
+See [LICENSE](/LICENSE).

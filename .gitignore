@@ -27,3 +27,5 @@ vite.config.ts.timestamp-*
 llms.txt
 supabase_schema.sql
 roles.sql
+configuring_vercel_fuctions_with_sveltekit.txt
+vercel_function_limits.txt
