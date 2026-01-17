@@ -1,9 +1,4 @@
 {
-    "functions": {
-        "api/arena/*/submit": {
-            "maxDuration": 60
-        }
-    },
     "headers": [
         {
             "source": "/arena/:path*",
