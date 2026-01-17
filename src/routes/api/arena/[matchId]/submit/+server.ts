@@ -202,8 +202,8 @@ console.log(JSON.stringify(result));
 
         const timeout = setTimeout(() => {
             executor.kill();
-            reject(new Error('Execution timeout (5s)'));
-        }, 5000);
+            reject(new Error('Execution timeout (180s)'));
+        }, 180000);
 
         executor.on('close', async (code) => {
             clearTimeout(timeout);
