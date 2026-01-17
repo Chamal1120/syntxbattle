@@ -1,6 +1,6 @@
 {
     "functions": {
-        "src/routes/api/arena/[matchId]/submit/+server.ts": {
+        "api/arena/*/submit": {
             "maxDuration": 60
         }
     },
