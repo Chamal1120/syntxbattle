@@ -1,4 +1,9 @@
 {
+    "functions": {
+        "src/routes/api/arena/[matchId]/submit/+server.ts": {
+            "maxDuration": 60
+        }
+    },
     "headers": [
         {
             "source": "/arena/:path*",
