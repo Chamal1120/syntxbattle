@@ -1,12 +1,14 @@
 # Contributing to Syntxbattle
 
-## Help to needed in these areas
+## Help needed in these areas 
 
 - Extending the lang support
 - UI/UX improvements
 - performance optimization
 - DB optimization
 - Adding more play modes
+
+**any other help is also greatly appreciated**
 
 ## How to Contribute
 
@@ -32,4 +34,4 @@ pnpm css:fix
 
 ## Questions
 
-If you have any questions, please feel free to open an issue on GitHub.
+If you have any questions, please feel free to open an issue on GitHub or hop into my discord server right here -> [click here](https://discord.gg/ta2scZKPjZ).
