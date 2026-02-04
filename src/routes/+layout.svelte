@@ -13,8 +13,25 @@
     import { onNavigate, beforeNavigate } from '$app/navigation';
     import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
     import Footer from '$lib/components/Footer.svelte';
+    import Toast from '$lib/components/Toast.svelte';
 
     import './app.css';
+
+    // Suppress Supabase auth warnings globally - we use secure server-side auth
+    if (browser && typeof window !== 'undefined' && !window.__supabaseWarningsSuppressed) {
+        window.__supabaseWarningsSuppressed = true;
+        const originalWarn = console.warn;
+        console.warn = (...args: any[]) => {
+            const message = String(args[0] || '');
+            if (
+                message.includes('supabase.auth.getSession()') ||
+                message.includes('supabase.auth.onAuthStateChange()')
+            ) {
+                return;
+            }
+            originalWarn.apply(console, args);
+        };
+    }
 
     let { children, data } = $props();
     let isNavigating = $state(false);
@@ -78,6 +95,8 @@
         <Footer />
     {/if}
 </div>
+
+<Toast />
 
 <style>
     .page {

@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
         .select('*')
         .eq('problem_id', match.problem_id)
         .eq('language', language)
-        .single();
+        .maybeSingle();
 
     if (langError) {
         console.error('Error fetching problem language config:', langError.message);

@@ -24,6 +24,7 @@ declare global {
 
     interface Window {
         __wc: WebContainer;
+        __supabaseWarningsSuppressed?: boolean;
     }
 }
 

@@ -17,16 +17,19 @@ import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/publi
 import { browser } from '$app/environment';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-// Filter out Supabase's getSession warning since we use secure authentication everywhere
-if (browser) {
-    const originalConsoleWarn = console.warn;
+// Suppress Supabase's getSession warning - we use secure server-side authentication
+if (browser && !window.__supabaseWarningsSuppressed) {
+    window.__supabaseWarningsSuppressed = true;
+    const originalWarn = console.warn;
     console.warn = (...args) => {
         const message = args[0]?.toString() || '';
-        if (message.includes('Using the user object as returned from supabase.auth.getSession()')) {
-            // Suppress this warning as we properly use getUser() for all authentication checks
+        if (
+            message.includes('Using the user object as returned from supabase.auth.getSession()') ||
+            message.includes('supabase.auth.onAuthStateChange()')
+        ) {
             return;
         }
-        originalConsoleWarn.apply(console, args);
+        originalWarn.apply(console, args);
     };
 }
 

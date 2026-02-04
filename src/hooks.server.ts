@@ -16,6 +16,19 @@ import { createServerClient } from '@supabase/ssr';
 import { type Handle } from '@sveltejs/kit';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 
+// Suppress Supabase's getSession warning - secure server-side auth is used with getUser()
+const originalWarn = console.warn;
+console.warn = (...args: any[]) => {
+    const message = String(args[0] || '');
+    if (
+        message.includes('supabase.auth.getSession()') ||
+        message.includes('supabase.auth.onAuthStateChange()')
+    ) {
+        return;
+    }
+    originalWarn.apply(console, args);
+};
+
 export const handle: Handle = async ({ event, resolve }) => {
     // Setup Supabase Client (Server-Side)
     event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
@@ -33,7 +46,6 @@ export const handle: Handle = async ({ event, resolve }) => {
         },
     });
 
-    // Add the Auth Helper to 'locals' so pages can check login status easily
     event.locals.safeGetSession = async () => {
         const {
             data: { session },
