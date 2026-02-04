@@ -11,35 +11,6 @@
 
 <div class="login-gate">
     <h1 class="login-title space-mono-bold">Login</h1>
-    <p>to start battling</p>
-
-    <form method="POST" action="?/magiclink" use:enhance class="auth-section">
-        <div class="input-wrapper">
-            <input
-                class="magic-link-input"
-                type="email"
-                name="email"
-                bind:value={email}
-                placeholder="Enter your email here"
-                required
-                autocomplete="off"
-                data-lpignore="true"
-                data-form-type="other"
-            />
-            <div class="lock-icon">
-                {#if isValidEmail}
-                    <RiLockUnlockFill />
-                {:else}
-                    <RiLockFill />
-                {/if}
-            </div>
-        </div>
-        <button class="magic-link-btn" type="submit" disabled={!isValidEmail}>
-            Send Magic Link
-        </button>
-    </form>
-
-    <div class="divider">OR</div>
 
     <form method="POST" action="?/github" use:enhance>
         <button class="github-btn" type="submit">
@@ -78,21 +49,50 @@
 
     {#if form?.error}<p class="status error">{form.error}</p>{/if}
     {#if form?.message}<p class="status">{form.message}</p>{/if}
+
+    <div class="divider">OR</div>
+
+    <form method="POST" action="?/magiclink" use:enhance class="auth-section">
+        <div class="input-wrapper">
+            <input
+                class="magic-link-input"
+                type="email"
+                name="email"
+                bind:value={email}
+                placeholder="Enter your email here"
+                required
+                autocomplete="off"
+                data-lpignore="true"
+                data-form-type="other"
+            />
+            <div class="lock-icon">
+                {#if isValidEmail}
+                    <RiLockUnlockFill />
+                {:else}
+                    <RiLockFill />
+                {/if}
+            </div>
+        </div>
+        <button class="magic-link-btn" type="submit" disabled={!isValidEmail}>
+            Send Magic Link
+        </button>
+    </form>
 </div>
 
 <style>
     .login-gate {
         display: flex;
+        flex: 1;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100dvh;
         margin: auto;
+        padding: 2rem;
         gap: var(--space-lg);
     }
 
     .login-title {
-        font-size: clamp(6rem, 10vw, 20rem);
+        font-size: clamp(5rem, 10vw, 20rem);
     }
 
     .auth-section {

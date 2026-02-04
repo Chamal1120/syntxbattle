@@ -10,6 +10,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
     const { supabase } = locals;
 
+    console.log('[Summary] Loading summary for match:', params.matchId);
+
     // Fetch match data
     const { data: match, error: matchError } = await supabase
         .from('matches')
@@ -18,33 +20,51 @@ export const load: PageServerLoad = async ({ locals, params }) => {
         .single();
 
     if (matchError) {
-        console.error('Error fetching match:', matchError.message);
+        console.error('[Summary] Error fetching match:', matchError.message);
         throw redirect(303, '/battle');
     }
 
-    // Fetch participants with status
+    console.log('[Summary] Match loaded:', match?.id);
+
+    // Fetch participants with status - ensure we get the latest data
     const { data: initialParts, error: partsError } = await supabase
         .from('match_participants')
         .select('user_id, status, finished_at, completion_time_ms')
-        .eq('match_id', params.matchId);
+        .eq('match_id', params.matchId)
+        .order('completion_time_ms', { ascending: true, nullsFirst: false });
 
     if (partsError) {
-        console.error('Error fetching participants:', partsError.message);
+        console.error('[Summary] Error fetching participants:', partsError.message);
     }
+
+    console.log('[Summary] Participants fetched:', initialParts?.length || 0, initialParts);
 
     // Fetch usernames from profiles
     const userIds = (initialParts || []).map((p: any) => p.user_id);
-    const { data: profilesData } = await supabase
-        .from('profiles')
-        .select('id, username')
-        .in('id', userIds);
+    let profilesData = [];
 
-    const usernameMap = new Map((profilesData || []).map((p: any) => [p.id, p.username]));
+    if (userIds.length > 0) {
+        const { data, error: profileError } = await supabase
+            .from('profiles')
+            .select('id, username')
+            .in('id', userIds);
+
+        if (profileError) {
+            console.error('[Summary] Error fetching profiles:', profileError.message);
+        }
+
+        profilesData = data || [];
+        console.log('[Summary] Profiles fetched:', profilesData.length);
+    }
+
+    const usernameMap = new Map(profilesData.map((p: any) => [p.id, p.username]));
 
     const participants = (initialParts || []).map((p: any) => ({
         ...p,
         username: usernameMap.get(p.user_id) || 'Unknown',
     }));
+
+    console.log('[Summary] Final participants with usernames:', participants);
 
     return {
         matchId: params.matchId,

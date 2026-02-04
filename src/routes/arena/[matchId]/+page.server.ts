@@ -43,18 +43,26 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
         .select('user_id, status, finished_at, completion_time_ms')
         .eq('match_id', params.matchId);
 
+    console.log('[Arena] Match participants query result:', {
+        count: initialParts?.length || 0,
+        error: partsError?.message,
+        matchId: params.matchId,
+    });
+
     if (partsError) {
         console.error('Error fetching participants:', partsError.message);
     }
 
     // Fetch usernames from profiles
     const userIds = (initialParts || []).map((p) => p.user_id);
-    const { data: profilesData } = await supabase
-        .from('profiles')
-        .select('id, username')
-        .in('id', userIds);
+    let profilesData = [];
 
-    const usernameMap = new Map((profilesData || []).map((p) => [p.id, p.username]));
+    if (userIds.length > 0) {
+        const { data } = await supabase.from('profiles').select('id, username').in('id', userIds);
+        profilesData = data || [];
+    }
+
+    const usernameMap = new Map(profilesData.map((p) => [p.id, p.username]));
 
     const participants = (initialParts || []).map((p) => ({
         ...p,

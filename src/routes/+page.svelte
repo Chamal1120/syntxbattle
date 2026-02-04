@@ -167,7 +167,7 @@
             await new Promise((r) => setTimeout(r, 700));
         }
 
-        goto('/battle');
+        goto('/begin');
     }
 </script>
 

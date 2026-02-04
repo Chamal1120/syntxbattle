@@ -3,7 +3,6 @@
  *
  * @description
  * This class manages the state and real-time interactions for a single battle match.
- * It encapsulates all Supabase channel logic, participant management, and match lifecycle events.
  *
  * @author Chamal Mallawaarachchi
  */
@@ -76,6 +75,7 @@ export class MatchManager {
                 this.handleParticipantLeft(payload)
             )
             .on('broadcast', { event: 'battle_start' }, () => this.handleBattleStart())
+            .on('broadcast', { event: 'match_cancelled' }, () => this.handleMatchCancelled())
             .subscribe((status: string) => {
                 if (status === 'SUBSCRIBED') {
                     this.handleSubscribed();
@@ -112,6 +112,12 @@ export class MatchManager {
     private handleBattleStart() {
         if (dev) console.log('[MatchManager] Broadcast: battle starting');
         goto(`/arena/${this.matchId}`);
+    }
+
+    private handleMatchCancelled() {
+        if (dev) console.log('[MatchManager] Broadcast: match cancelled');
+        alert('The match has been cancelled by the host.');
+        goto('/begin');
     }
 
     private async handleSubscribed() {
@@ -216,10 +222,24 @@ export class MatchManager {
             this.channel = null;
         }
 
-        await this.supabase
+        // Don't delete participants - they're needed for the summary page
+        // Only mark as left if they haven't started competing yet
+        const { data: participant } = await this.supabase
             .from('match_participants')
-            .delete()
+            .select('status')
             .eq('match_id', this.matchId)
-            .eq('user_id', this.user.id);
+            .eq('user_id', this.user.id)
+            .single();
+
+        if (participant?.status === 'competing') {
+            // If status is 'competing', it means they never entered arena
+            // Mark them as left but DON'T delete
+            await this.supabase
+                .from('match_participants')
+                .update({ status: 'left' })
+                .eq('match_id', this.matchId)
+                .eq('user_id', this.user.id);
+        }
+        // If status is 'finished', leave the data intact for summary page
     }
 }

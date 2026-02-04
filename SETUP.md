@@ -60,9 +60,9 @@ PUBLIC_SUPABASE_URL="http://localhost:54321"
 PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
 ```
 
--   Replace the values with your local or cloud Supabase credentials.
--   The `DATABASE_URL` is used by Drizzle ORM for migrations.
--   `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY` are used by the Supabase client.
+- Replace the values with your local or cloud Supabase credentials.
+- The `DATABASE_URL` is used by Drizzle ORM for migrations.
+- `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY` are used by the Supabase client.
 
 ## 5. Database Schema
 

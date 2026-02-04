@@ -5,7 +5,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
     const { session } = await safeGetSession();
 
     if (session) {
-        throw redirect(303, '/battle');
+        throw redirect(303, '/begin');
     }
 
     return {};
@@ -16,7 +16,7 @@ export const actions: Actions = {
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'github',
             options: {
-                redirectTo: `${url.origin}/auth/callback?next=/battle`,
+                redirectTo: `${url.origin}/auth/callback?next=/begin`,
             },
         });
 
@@ -33,7 +33,7 @@ export const actions: Actions = {
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: `${url.origin}/auth/callback?next=/battle`,
+                redirectTo: `${url.origin}/auth/callback?next=/begin`,
             },
         });
 
@@ -53,7 +53,7 @@ export const actions: Actions = {
         const { error } = await supabase.auth.signInWithOtp({
             email,
             options: {
-                emailRedirectTo: `${url.origin}/auth/callback?next=/battle`,
+                emailRedirectTo: `${url.origin}/auth/callback?next=/begin`,
             },
         });
 

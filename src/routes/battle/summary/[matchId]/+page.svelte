@@ -13,6 +13,9 @@
 
     let { data }: { data: PageData } = $props();
 
+    $inspect('Summary page data:', data);
+    $inspect('Participants:', data.participants);
+
     let participants = $derived(
         (data.participants || []).sort((a: any, b: any) => {
             if (a.completion_time_ms && b.completion_time_ms) {

@@ -39,6 +39,7 @@
     let matchStartTime = $state<Date | null>(null);
     let participants = $state<any[]>([]);
     let currentUserStatus = $state('competing');
+    let isInitializing = $state(true);
     let currentLanguage = $state('javascript');
     let showFailedTestsPopover = $state(false);
     let failedTestsMessage = $state('');
@@ -75,7 +76,17 @@
         const isSamePage = navigation.to?.route?.id === navigation.from?.route?.id;
         const isRefresh = !navigation.to || isSamePage;
 
+        console.log(
+            '[Arena] beforeNavigate - isRefresh:',
+            isRefresh,
+            'currentUserStatus:',
+            currentUserStatus
+        );
+        console.log('[Arena] navigation.to?.route?.id:', navigation.to?.route?.id);
+        console.log('[Arena] navigation.from?.route?.id:', navigation.from?.route?.id);
+
         if (currentUserStatus !== 'finished' && currentUserStatus !== 'left' && !isRefresh) {
+            console.log('[Arena] Marking user as left');
             const client = await getSupabase();
             if (client) {
                 await client
@@ -103,10 +114,15 @@
             matchStartTime = match.started_at ? new Date(match.started_at) : new Date();
 
             const currentParticipant = participants.find((p) => p.user_id === data.user.id);
+            console.log('[Arena] Current participant:', currentParticipant);
+            console.log('[Arena] Total participants:', participants.length);
+
             if (currentParticipant) {
                 currentUserStatus = currentParticipant.status || 'competing';
+                console.log('[Arena] Current user status from DB:', currentUserStatus);
 
                 if (currentUserStatus === 'left' && currentParticipant.status !== 'finished') {
+                    console.log('[Arena] Resetting status from left to competing');
                     currentUserStatus = 'competing';
                     const client = await getSupabase();
                     if (client) {
@@ -126,7 +142,41 @@
                         }
                     }
                 }
+            } else {
+                console.log('[Arena] Current user not in participants list - adding them');
+                // User accessed arena directly or refreshed - add them to match
+                const client = await getSupabase();
+                if (client) {
+                    const { error: joinError } = await client.from('match_participants').insert([
+                        {
+                            match_id: data.matchId,
+                            user_id: data.user.id,
+                            status: 'competing',
+                        },
+                    ]);
+
+                    if (joinError && joinError.code !== '23505') {
+                        // 23505 is duplicate key - means already exists
+                        console.error('[Arena] Failed to join match:', joinError);
+                    } else {
+                        // Add to local participants list
+                        participants = [
+                            ...participants,
+                            {
+                                user_id: data.user.id,
+                                status: 'competing',
+                                finished_at: null,
+                                completion_time_ms: null,
+                                username: data.user.user_metadata?.username || 'You',
+                            },
+                        ];
+                        currentUserStatus = 'competing';
+                    }
+                }
             }
+
+            // Initialization complete
+            isInitializing = false;
 
             if (!window.crossOriginIsolated) {
                 output = 'Error: Isolation Headers Missing. Please refresh the page.';
@@ -228,11 +278,13 @@
         })();
 
         // Handle browser back/navigation away
-        // NOTE: beforeunload fires on both refresh and close, so we mark as 'left'
-        // If user refreshes, onMount will reset status back to 'competing'
-        const handleBeforeUnload = () => {
+        // NOTE: Don't mark as 'left' on beforeunload as it fires on refresh too
+        // Only handle leaving on actual navigation via beforeNavigate hook
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
             if (currentUserStatus !== 'finished' && currentUserStatus !== 'left') {
-                leaveArena(true);
+                // Just show a warning, don't update status
+                e.preventDefault();
+                e.returnValue = '';
             }
         };
 
@@ -240,9 +292,6 @@
 
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
-            if (currentUserStatus !== 'finished' && currentUserStatus !== 'left') {
-                leaveArena(true);
-            }
         };
     });
 
@@ -368,7 +417,7 @@
 
             if (result.success) {
                 currentUserStatus = 'finished';
-                output += 'All tests passed!\n';
+                output += 'All tests passed! Congratulations!\n';
 
                 console.log('Current participants before update:', participants);
                 console.log('Looking for user:', data.user.id);
@@ -403,6 +452,10 @@
                     .catch((err: unknown) => {
                         if (dev) console.error('Broadcast failed:', err);
                     });
+
+                // Don't redirect immediately - wait for all players to finish
+                // The $effect below will handle redirect when everyone is done
+                output += 'Waiting for other players to finish...\n';
             } else {
                 // Tests failed - show popover
                 output += 'Some tests failed.\n';
@@ -509,9 +562,36 @@
         participants.filter((p) => p.status !== 'finished' && p.status !== 'left').length
     );
 
+    const finishedCount = $derived(participants.filter((p) => p.status === 'finished').length);
+
     $effect(() => {
-        if (allFinished || activeCompetitors === 0) {
-            if (dev) console.log('Match complete - redirecting to summary');
+        // Don't redirect if still initializing
+        if (isInitializing) {
+            return;
+        }
+
+        // Don't redirect if participants list is empty - it's still loading
+        if (participants.length === 0) {
+            if (dev) console.log('[Arena] Participants list empty, not redirecting');
+            return;
+        }
+
+        if (dev) {
+            console.log('[Arena] Status check:', {
+                totalParticipants: participants.length,
+                activeCompetitors,
+                finishedCount,
+                allFinished,
+                participantStatuses: participants.map((p) => ({
+                    user_id: p.user_id,
+                    status: p.status,
+                })),
+            });
+        }
+
+        // Only redirect when ALL participants are done (finished or left)
+        if (allFinished) {
+            if (dev) console.log('[Arena] All participants finished/left - redirecting to summary');
             setTimeout(() => {
                 goto(`/battle/summary/${data.matchId}`);
             }, 2000);

@@ -43,6 +43,12 @@ export const POST: RequestHandler = async ({ request, params, locals }) => {
         }
 
         // Get language-specific metadata
+        console.log('[Submit API] Fetching problem_languages for:', {
+            problem_id: match.problem_id,
+            language: language,
+            match_id: matchId,
+        });
+
         const { data: problemLang, error: langError } = await supabase
             .from('problem_languages')
             .select('*')
@@ -50,7 +56,13 @@ export const POST: RequestHandler = async ({ request, params, locals }) => {
             .eq('language', language)
             .single();
 
+        console.log('[Submit API] problem_languages query result:', {
+            data: problemLang,
+            error: langError,
+        });
+
         if (langError || !problemLang) {
+            console.error('[Submit API] Language query failed:', langError);
             return json(
                 { error: `Language '${language}' not supported for this problem` },
                 { status: 404 }

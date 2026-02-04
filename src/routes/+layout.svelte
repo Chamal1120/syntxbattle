@@ -53,18 +53,6 @@
 
     onNavigate((navigation) => {
         isNavigating = false;
-        // Check the browser support for the View Transition API
-        if (!document.startViewTransition) return;
-
-        // Don't delay first navigation - important for LCP
-        if (performance.now() < 3000) return;
-
-        return new Promise((resolve) => {
-            document.startViewTransition(async () => {
-                resolve();
-                await navigation.complete;
-            });
-        });
     });
 </script>
 
@@ -76,6 +64,7 @@
     <CustomCursor />
 {/if}
 
+<!-- Disabled page loader to prevent blink on navigation
 <div class="page-loader" class:active={isNavigating}>
     <div class="lds-facebook">
         <div></div>
@@ -83,6 +72,7 @@
         <div></div>
     </div>
 </div>
+-->
 
 <div class="page">
     {#if page.url.pathname !== '/'}
