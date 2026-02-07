@@ -26,15 +26,15 @@
         };
     });
 
-    const inviteLink = $derived(typeof window !== 'undefined' ? window.location.href : '');
+    //const inviteLink = $derived(typeof window !== 'undefined' ? window.location.href : '');
 
     function copyInviteLink() {
         navigator.clipboard.writeText(data.matchId);
-        toast.show('Match ID copied to clipboard');
+        toast.show('Battle ID copied to clipboard');
     }
 
     async function cancelMatch() {
-        if (!confirm('Are you sure you want to cancel this match?')) {
+        if (!confirm('Are you sure you want to cancel this battle?')) {
             return;
         }
 
@@ -59,7 +59,7 @@
             toast.show('Match cancelled');
             window.location.href = '/begin';
         } else {
-            toast.show('Failed to cancel match');
+            toast.show('Failed to cancel battle!');
         }
     }
 
@@ -92,7 +92,7 @@
         <div class="header">
             <h1 class="lobby-title">{match.matchInfo.problems.title}</h1>
             <button class="invite-tag" onclick={copyInviteLink}>
-                <span>Match ID (Click to Copy)</span>
+                <span>Battle ID (Click to Copy)</span>
             </button>
         </div>
 
@@ -100,7 +100,7 @@
             {#if match.joining}
                 Joining battle...
             {:else if match.participants.length === match.matchInfo.max_players}
-                Ready to start.
+                Ready to start!
             {:else}
                 Waiting for opponent ({match.participants.length}/{match.matchInfo.max_players})
             {/if}
@@ -143,7 +143,7 @@
             {/if}
         </div>
     {:else}
-        <p>Loading Match Data...</p>
+        <p>Loading Battle Info...</p>
     {/if}
 </div>
 

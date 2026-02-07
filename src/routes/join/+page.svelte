@@ -21,13 +21,13 @@
         const trimmedId = matchId.trim();
 
         if (!trimmedId) {
-            error = 'Please enter a match ID';
+            error = 'Please enter a Battle ID';
             return;
         }
 
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
         if (!uuidRegex.test(trimmedId)) {
-            error = 'Invalid match ID format';
+            error = 'Invalid Battle ID format';
             return;
         }
 
@@ -48,7 +48,7 @@
         <button class="back-btn" onclick={goBack}> ← Back </button>
 
         <h1>Join Battle</h1>
-        <p class="subtitle">Enter the match ID to join an existing battle</p>
+        <p class="subtitle">Enter the Battle ID to join an existing battle</p>
 
         <div class="input-group">
             <input
@@ -66,8 +66,8 @@
         <button class="join-btn" onclick={handleJoin}> Join Battle </button>
 
         <div class="help-text">
-            <p>💡 Ask your opponent for the match ID</p>
-            <p>📋 They can copy it from the match lobby</p>
+            <p>💡 Ask your opponent for the Battle ID</p>
+            <p>📋 They can copy it from the lobby</p>
         </div>
     </div>
 </div>

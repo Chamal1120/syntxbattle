@@ -61,19 +61,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         return { session, user };
     };
 
-    const response = await resolve(event, {
-        // This is a Supabase-specific optimization for headers
-        filterSerializedResponseHeaders(name) {
-            return name === 'content-range' || name === 'x-supabase-api-version';
-        },
-    });
-
-    // Apply WebContainer security headers to arena and battle pages
-    // This is required because browsers need consistent COOP/COEP headers across navigation
-    // Exclude  followings:
-    //      - root and login pages
-    //      - Skip for Lighthouse and other tools
-    //      - Vercel speed insights
+    // Determine if we need WebContainer security headers before resolving
     const needsHeaders =
         event.url.pathname.startsWith('/arena') || event.url.pathname.startsWith('/battle');
     const excludePaths =
@@ -84,6 +72,15 @@ export const handle: Handle = async ({ event, resolve }) => {
     const userAgent = event.request.headers.get('user-agent') || '';
     const isLighthouse = userAgent.includes('Chrome-Lighthouse');
 
+    const response = await resolve(event, {
+        // This is a Supabase-specific optimization for headers
+        filterSerializedResponseHeaders(name) {
+            return name === 'content-range' || name === 'x-supabase-api-version';
+        },
+    });
+
+    // Apply WebContainer security headers to arena and battle pages
+    // This is required because browsers need consistent COOP/COEP headers across navigation
     if (needsHeaders && !excludePaths && !isLighthouse) {
         response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
         response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');

@@ -41,7 +41,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
     // Fetch usernames from profiles
     const userIds = (initialParts || []).map((p: any) => p.user_id);
-    let profilesData = [];
+    let profilesData: Array<{ id: string; username: string }> = [];
 
     if (userIds.length > 0) {
         const { data, error: profileError } = await supabase

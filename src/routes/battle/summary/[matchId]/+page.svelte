@@ -35,7 +35,7 @@
     }
 
     function newMatch() {
-        goto('/battle');
+        goto('/begin');
     }
 </script>
 
@@ -91,9 +91,9 @@
                 </table>
             </div>
 
-            <button class="new-match-btn" onclick={newMatch}> Start New Match </button>
+            <button class="new-match-btn" onclick={newMatch}> Start New Battle </button>
         {:else}
-            <p>Loading match data...</p>
+            <p>Loading battle summary...</p>
         {/if}
     </div>
 </div>

@@ -8,7 +8,7 @@
 </script>
 
 <div class="problem-container">
-    <h1 class="problem-title space-mono-bold">Select Your Problem</h1>
+    <h1 class="problem-title space-mono-bold">Select Your Challenge</h1>
 
     {#if problems.length === 0}
         <div class="loading-state">

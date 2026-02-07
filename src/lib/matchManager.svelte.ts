@@ -18,7 +18,7 @@ export class MatchManager {
     joining = $state(false);
 
     // Private state
-    private channel: RealtimeChannel | null = null;
+    channel: RealtimeChannel | null = null;
     private supabase: SupabaseClient | null = null;
     private matchId = '';
     private user: any = null;
@@ -111,7 +111,8 @@ export class MatchManager {
 
     private handleBattleStart() {
         if (dev) console.log('[MatchManager] Broadcast: battle starting');
-        goto(`/arena/${this.matchId}`);
+        // Use window.location.href to force full page reload and apply COOP/COEP headers
+        window.location.href = `/arena/${this.matchId}`;
     }
 
     private handleMatchCancelled() {
@@ -199,7 +200,8 @@ export class MatchManager {
             payload: { match_id: this.matchId },
         });
 
-        goto(`/arena/${this.matchId}`);
+        // Use window.location.href to force full page reload and apply COOP/COEP headers
+        window.location.href = `/arena/${this.matchId}`;
     }
 
     async cleanup() {

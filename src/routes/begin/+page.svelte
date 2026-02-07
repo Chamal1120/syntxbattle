@@ -8,11 +8,11 @@
      * @author Chamal Mallawaarachchi
      */
     import { goto } from '$app/navigation';
-    import type { PageData } from './$types';
+    // import type { PageData } from './$types';
     import RiSwordLine from '~icons/ri/sword-line';
     import RiCollapseDiagonalLine from '~icons/ri/collapse-diagonal-line';
 
-    let { data }: { data: PageData } = $props();
+    // let { data }: { data: PageData } = $props();
 
     function createBattle() {
         goto('/battle');
@@ -29,20 +29,17 @@
 
 <div class="begin-container">
     <div class="begin-card">
-        <h1>What do you want to do?</h1>
-        <p class="subtitle">Start competing or join an existing match</p>
-
         <div class="button-group">
             <button class="battle-btn create-btn" onclick={createBattle}>
                 <span class="btn-icon"><RiSwordLine /></span>
-                <span class="btn-text">Create Battle</span>
-                <span class="btn-desc">Start a new coding challenge</span>
+                <span class="btn-text">Create</span>
+                <span class="btn-desc">Start a new battle</span>
             </button>
 
             <button class="battle-btn join-btn" onclick={joinBattle}>
                 <span class="btn-icon"><RiCollapseDiagonalLine /></span>
-                <span class="btn-text">Join Battle</span>
-                <span class="btn-desc">Enter with a match ID</span>
+                <span class="btn-text">Join</span>
+                <span class="btn-desc">Enter with a battle ID</span>
             </button>
         </div>
     </div>
@@ -72,19 +69,6 @@
         width: 100%;
         max-width: 600px;
         text-align: center;
-    }
-
-    h1 {
-        margin-bottom: 0.5rem;
-        color: var(--accent);
-        font-weight: bold;
-        font-size: 3rem;
-    }
-
-    .subtitle {
-        margin-bottom: 3rem;
-        color: var(--comment);
-        font-size: 1.1rem;
     }
 
     .button-group {
@@ -172,10 +156,6 @@
     }
 
     @media (max-width: 640px) {
-        h1 {
-            font-size: 2rem;
-        }
-
         .button-group {
             grid-template-columns: 1fr;
         }
