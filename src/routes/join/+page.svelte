@@ -10,7 +10,7 @@
     import { goto } from '$app/navigation';
     import type { PageData } from './$types';
 
-    let { data }: { data: PageData } = $props();
+    // let { data }: { data: PageData } = $props();
 
     let matchId = $state('');
     let error = $state('');

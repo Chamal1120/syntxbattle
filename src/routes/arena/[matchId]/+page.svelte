@@ -565,7 +565,7 @@
     const finishedCount = $derived(participants.filter((p) => p.status === 'finished').length);
 
     $effect(() => {
-        // Don't redirect if still initializing
+        // Stop redirecting if still initializing
         if (isInitializing) {
             return;
         }
@@ -589,7 +589,7 @@
             });
         }
 
-        // Only redirect when ALL participants are done (finished or left)
+        // Redirect when ALL participants are done (finished/left)
         if (allFinished) {
             if (dev) console.log('[Arena] All participants finished/left - redirecting to summary');
             setTimeout(() => {

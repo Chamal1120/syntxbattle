@@ -13,7 +13,7 @@
     let showMenu = $state(false);
 
     function handleLogoClick() {
-        goto('/');
+        goto('/begin');
     }
 
     function toggleMenu() {

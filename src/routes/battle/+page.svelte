@@ -2,17 +2,33 @@
     import { enhance } from '$app/forms';
     import RiListCheck from '~icons/ri/list-check';
     import RiMapSwordLine from '~icons/ri/sword-line';
+    import ProblemModal from '$lib/components/problemModal.svelte';
+
+    import { goto } from '$app/navigation';
 
     let { data } = $props();
     let problems = $derived(data.problems || []);
+
+    let showProblemModal = $state(false);
+    let selectedProblem: (typeof problems)[number] | null = $state(null);
+
+    function openProblemModal(problem: (typeof problems)[number]) {
+        selectedProblem = problem;
+        showProblemModal = true;
+    }
+
+    function goBack() {
+        goto('/begin');
+    }
 </script>
 
 <div class="problem-container">
+    <button class="back-btn" onclick={goBack}> ← Back </button>
     <h1 class="problem-title space-mono-bold">Select Your Challenge</h1>
 
     {#if problems.length === 0}
         <div class="loading-state">
-            <p>No problems available...</p>
+            <p>No challenges available...</p>
         </div>
     {:else}
         <div class="table-wrapper">
@@ -41,7 +57,7 @@
                             <td class="col-actions">
                                 <div class="action-buttons">
                                     <button
-                                        onclick={() => {}}
+                                        onclick={() => {openProblemModal(problem)}}
                                         class="info-btn"
                                         title="More information"
                                         aria-label="Go to more information"
@@ -68,6 +84,9 @@
             </table>
         </div>
     {/if}
+    {#if selectedProblem}
+        <ProblemModal bind:isOpen={showProblemModal} problem={selectedProblem}/>
+    {/if}
 </div>
 
 <style>
@@ -81,6 +100,23 @@
         max-width: 1400px;
         margin: 0 auto;
         padding: 0 1rem;
+    }
+
+    .back-btn {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border-dim);
+        background: transparent;
+        color: var(--comment);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
     }
 
     .problem-title {
